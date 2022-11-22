@@ -6,11 +6,15 @@ import time
 import numpy as np
 import torch
 
+from train import TrainNeuralNetwork
+
 import utils.utils as utils
 from utils.constants import *
 
+# TODO complete
 def train(config):
-    pass
+    trainNeuralNet = TrainNeuralNetwork(config=config)
+    trainNeuralNet.startTrain()
 
 def test(config):
     pass
@@ -30,7 +34,6 @@ if __name__ == "__main__":
     config = dict()
     for arg in vars(args):
         config[arg] = getattr(args, arg)
-
     
     if (config['type'] == "TRAIN"):
         train(config)

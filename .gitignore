@@ -4,3 +4,4 @@ data/dataset
 # Cache Locations
 .ipynb_checkpoints
 utils/__pycache__
+data/__pycache__
