@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torchaudio
 from torchvision import transforms
-from custom_transforms import ExtractMFCC, ToTensor
+from .custom_transforms import ExtractMFCC, ToTensor
 import librosa
 
 import numpy as np

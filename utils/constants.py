@@ -9,6 +9,8 @@ IRMAS_DATASET_DIRECTORY = "data/dataset"
 IRMAS_SINGLE_INST_DATASET_PATH = "data/dataset/IRMAS-TrainingData"
 IRMAS_MULTI_INST_DATASET_PATH = "data/dataset/IRMAS-TestingData-Part1"
 
+NUM_MFCC_FEATURES = 20
+
 LABEL = ["cel", "cla", "flu", "gac", "gel", "org", "pia", "sax", "tru", "vio", "voi"]
 LABEL_MAPPING = {
     "cel": 0,
@@ -36,7 +38,6 @@ REAL_LABEL_MAPPING = {
     "vio": "violin",
     "voi": "voice"
 }
-
 
 class ModelType(enum.Enum):
     TRAIN = 0
