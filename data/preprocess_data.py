@@ -35,6 +35,8 @@ class IrmasDataset(Dataset):
         return len(self.dataset_csv)
     
     def __getitem__(self, idx):
+        # Get sample with index `idx`
+
         if (torch.is_tensor(idx)):
             idx = idx.tolist()
 
@@ -45,6 +47,7 @@ class IrmasDataset(Dataset):
 
         audio_sample, sample_rate = librosa.load(self.dataset_csv.iloc[idx, 0])
 
+        # Get useful data
         sample = {
             'path': path, 
             'audio': audio_sample,
@@ -54,6 +57,7 @@ class IrmasDataset(Dataset):
             'label': label
         }
 
+        # Transform the sample
         if self.transform:
             sample = self.transform(sample)
 
@@ -96,22 +100,5 @@ class IrmasDataset(Dataset):
                                 data = [path, drums, genre, label]
                                 writer.writerow(data)
 
-# Preprocess data
-if __name__ == "__main__":
-
-    irmas_dataset = IrmasDataset(
-        root_dir=IRMAS_DATASET_DIRECTORY, 
-        dataset_path=IRMAS_SINGLE_INST_DATASET_PATH,
-        transform = transforms.Compose([
-            ExtractMFCC(num_features=20),
-            ToTensor()
-        ]),
-        generate_csv=True
-    )
-
-    dataloader = DataLoader(irmas_dataset, batch_size=4, shuffle=True, num_workers=0)
-
-    for i_batch, sample_batched in enumerate(dataloader):
-        print(i_batch, sample_batched['mfcc'].size(), sample_batched['label'].size())
 
 

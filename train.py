@@ -19,6 +19,7 @@ class TrainNeuralNetwork():
             for i_batch, sample_batched in enumerate(dataloader):
                 print(i_batch, sample_batched['mfcc'].size(), sample_batched['label'].size())
 
+                
 
         elif self.config["model_name"] == SupportedModels.CNN.name:
             print("CNN")
