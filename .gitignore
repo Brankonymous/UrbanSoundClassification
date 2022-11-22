@@ -1,5 +1,6 @@
 # Dataset location
 data/dataset
 
-# Jupyter notebook cache
+# Cache Locations
 .ipynb_checkpoints
+utils/__pycache__
