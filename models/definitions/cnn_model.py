@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 # TODO add CNN architecture
-# KOMENTAR
+# obrisan komentar
 class ConvNeuralNetwork():
     def __init__(self):
         pass
