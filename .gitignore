@@ -1,0 +1,5 @@
+# Dataset location
+data/dataset
+
+# Jupyter notebook cache
+.ipynb_checkpoints
