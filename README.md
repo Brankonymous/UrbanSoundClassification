@@ -10,9 +10,12 @@ Run <b> instrument_classification.py </b>
 <b> --model_type </b>   (Neural network (model) to use) <br />
 <br />
 
-Aditional info can be found using --help parameter
+Aditional info can be found using <b>--help</b> parameter
 
 # Dataset
 IRMAS https://www.upf.edu/web/mtg/irmas
 
 # Network models
+Linear network with 3 hidden layers <br />
+
+CNN <br />
