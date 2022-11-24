@@ -5,12 +5,18 @@ import os
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-IRMAS_DATASET_DIRECTORY = "data/dataset"
-IRMAS_SINGLE_INST_DATASET_PATH = "data/dataset/IRMAS-TrainingData"
-IRMAS_MULTI_INST_DATASET_PATH = "data/dataset/IRMAS-TestingData-Part1"
+IRMAS_DATASET_DIRECTORY = "data/dataset/"
+IRMAS_SINGLE_INST_DATASET_PATH = "data/dataset/IRMAS-TrainingData/"
+IRMAS_MULTI_INST_DATASET_PATH = "data/dataset/IRMAS-TestingData-Part1/"
 
-LINEAR_STARTING_NODE_SIZE = 10
+
+# Model constants
+LEARNING_RATE = 1e-3
+BATCH_SIZE = 64
+EPOCHS = 5
+
 NUM_MFCC_FEATURES = 20
+
 
 LABEL = ["cel", "cla", "flu", "gac", "gel", "org", "pia", "sax", "tru", "vio", "voi"]
 LABEL_MAPPING = {
@@ -43,7 +49,8 @@ REAL_LABEL_MAPPING = {
 class ModelType(enum.Enum):
     TRAIN = 0
     TEST = 1
-    CUSTOM_TEST = 2
+    TRAIN_AND_TEST = 2
+    CUSTOM_TEST = 3
 
 class SupportedModels(enum.Enum):
     LINEAR = 0

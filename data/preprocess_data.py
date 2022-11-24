@@ -17,18 +17,14 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from utils.constants import *
 
 class IrmasDataset(Dataset):
-    def __init__(self, root_dir, dataset_path, transform=None, generate_csv=True):
+    def __init__(self, dataset_path, transform=None, generate_csv=True):
         """
         Args:
-            root_dir (string): Directory of all IRMAS datasets
-            dataset_path (string): Path to a dataset
+            dataset_name (string): Path to a dataset
             transform (callable, optional): Optional audio transform to be applied
             generate_csv (bool): flag representing need for csv creation
         """
-        self.parse_irmas_dataset(root_dir, dataset_path, generate_csv)
-        self.dataset_csv = pd.read_csv(root_dir + "/irmas_dataset.csv")
-
-        self.root_dir = root_dir
+        self.dataset_csv = pd.read_csv(dataset_path)
         self.transform = transform
 
     def __len__(self):
@@ -62,43 +58,3 @@ class IrmasDataset(Dataset):
             sample = self.transform(sample)
 
         return sample
-    
-    def parse_irmas_dataset(self, root_dir, dataset_path, generate_csv):
-        # Create annotated csv
-        if generate_csv:
-            header = ['path', 'drums', 'genre', 'label']
-            # data = ["/", "nod", "cla", "pia"]
-
-            with open(root_dir + "/irmas_dataset.csv", 'w') as f:
-                writer = csv.writer(f)
-
-                # Write header
-                writer.writerow(header)
-                
-                # Write data
-                for root, subdirectories, _ in os.walk(dataset_path):
-                    for subdirectory in subdirectories:
-                        for subdir_root, _, files in os.walk(os.path.join(root, subdirectory)):
-                            for file in files:
-                                # Default file params
-                                path = os.path.join(subdir_root, file)
-                                drums = "nod"
-                                genre = None
-                                label = LABEL_MAPPING[subdirectory]
-
-                                # Extract category info from file name
-                                categories = re.findall('\[.*?\]', file)[1:]
-                                categories = [category.replace('[', '').replace(']', '') for category in categories]
-
-                                for category in categories:
-                                    if category == "nod" or category == "dru":
-                                        drums = category
-                                    else:
-                                        genre = category
-                                    
-                                # Write to csv
-                                data = [path, drums, genre, label]
-                                writer.writerow(data)
-
-
-
