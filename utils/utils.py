@@ -26,7 +26,6 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
     header = ['path', 'drums', 'genre', 'label']
     X, y = [], []
     # data = ["/", "nod", "cla", "pia"]
-    DEBUG_CSV_SIZE = 100
          
     # Write data
     for root, subdirectories, _ in os.walk(dataset_path):
@@ -52,15 +51,6 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
                     # Write to csv
                     X.append([path, drums, genre])
                     y.append([label])
-
-                    if len(X) == DEBUG_CSV_SIZE:
-                        break
-                if len(X) == DEBUG_CSV_SIZE:
-                        break
-            if len(X) == DEBUG_CSV_SIZE:
-                        break
-        if len(X) == DEBUG_CSV_SIZE:
-                        break
 
     # Converting arrays to numpy
     X = np.array(X)

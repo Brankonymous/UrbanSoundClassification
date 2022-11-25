@@ -89,7 +89,7 @@ class TrainNeuralNetwork():
 
         test_loss /= num_batches
         accuracy /= size
-        accuracy *= 100
+        accuracy *= 100 * 100
         print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n')
 
         return test_loss, accuracy
