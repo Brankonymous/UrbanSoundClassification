@@ -12,12 +12,15 @@ IRMAS_MULTI_INST_DATASET_PATH = "data/dataset/IRMAS-TestingData-Part1/"
 SAVED_MODEL_PATH = "models/saved_models/"
 SAVED_RESULTS_PATH = "data/results/"
 
+# Common
+NUM_CLASSES = 11
+
 # Model constants
 NUM_WORKERS = 0
 BATCH_SIZE = 64
-EPOCHS = 5
-LEARNING_RATE = 1e-1
-LR_STEP_SIZE = 10
+EPOCHS = 100
+LEARNING_RATE = 1e-2
+LR_STEP_SIZE = 50
 WEIGHT_DECAY = 1e-5
 
 NUM_MFCC_FEATURES = 30

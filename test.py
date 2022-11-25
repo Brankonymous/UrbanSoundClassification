@@ -12,6 +12,7 @@ from models.definitions.linear_model import LinearNeuralNetwork
 class TestNeuralNetwork():
     def __init__(self, config):
         self.config = config
+        self.confusion_matrix = np.array(NUM_CLASSES, NUM_CLASSES)
 
     def startTest(self):
         print("Testing model \n")

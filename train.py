@@ -5,6 +5,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 import numpy as np
+import datetime
 
 from models.definitions.cnn_model import ConvNeuralNetwork
 from models.definitions.linear_model import LinearNeuralNetwork
@@ -34,8 +35,12 @@ class TrainNeuralNetwork():
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
             # Train and validate neural network
+            start_time = datetime.datetime.now()
             for t in range(EPOCHS):
                 print(f'Epoch {t+1}\n-------------------------------')
+                curr_time = datetime.datetime.now()
+                print(f'Current time: {curr_time.time()} / Time elapsed from beggining: {curr_time-start_time}')
+
                 self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
                 epoch_loss, epoch_accuracy = self.valLoop(val_dataloader, model, loss_fn)
 
