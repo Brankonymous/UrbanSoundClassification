@@ -9,12 +9,14 @@ IRMAS_DATASET_DIRECTORY = "data/dataset/"
 IRMAS_SINGLE_INST_DATASET_PATH = "data/dataset/IRMAS-TrainingData/"
 IRMAS_MULTI_INST_DATASET_PATH = "data/dataset/IRMAS-TestingData-Part1/"
 
+SAVED_MODEL_PATH = "models/saved_models/"
+SAVED_RESULTS_PATH = "data/results/"
 
 # Model constants
 NUM_WORKERS = 0
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-2
-EPOCHS = 50
+EPOCHS = 5
 
 NUM_MFCC_FEATURES = 20
 

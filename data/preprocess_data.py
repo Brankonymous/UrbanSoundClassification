@@ -50,6 +50,7 @@ class IrmasDataset(Dataset):
             'sample_rate': sample_rate,
             'drums': drums,
             'genre': genre,
+            'input': [],
             'label': label
         }
 
@@ -58,3 +59,4 @@ class IrmasDataset(Dataset):
             sample = self.transform(sample)
 
         return sample
+    

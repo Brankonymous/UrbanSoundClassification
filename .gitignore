@@ -1,5 +1,7 @@
-# Dataset location
+# Local data location
 data/dataset
+data/results
+models/saved_models
 
 # Cache Locations
 .ipynb_checkpoints

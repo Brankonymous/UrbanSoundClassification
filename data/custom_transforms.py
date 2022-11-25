@@ -15,15 +15,17 @@ class ExtractMFCC(object):
     def __call__(self, sample):
         audio_sample = sample['audio']
 
-        mfcc_features = librosa.feature.mfcc(y=audio_sample, sr=sample['sample_rate'], n_mfcc=self.num_features)
+        # Extract MFCC
+        mfcc_features = librosa.feature.mfcc(y=audio_sample, sr=sample['sample_rate'], n_mfcc=self.num_features, hop_length=5000, n_fft=2048)
+        
+        # Normalize and convert to 1D array
         mfcc_features = processing.cmvn(mfcc_features)
-        mfcc_features = np.median(mfcc_features, axis=1)
+        mfcc_features = np.mean(mfcc_features, axis=1)
 
         # Normalize feature
         mfcc_features = mfcc_features / np.linalg.norm(mfcc_features)
-        # print(mfcc_features)
 
-        sample['mfcc'] = mfcc_features
+        sample['input'].append(mfcc_features)
 
         return sample
 
@@ -32,7 +34,7 @@ class ToTensor(object):
     # Covert sample features and output into tensor
 
     def __call__(self, sample):
-        sample['mfcc'] = torch.from_numpy(sample['mfcc'])
+        sample['input'] = torch.from_numpy(np.array(sample['input']).ravel())
         sample['label'] = torch.from_numpy(np.array(sample['label']))
 
         return sample

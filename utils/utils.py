@@ -5,6 +5,9 @@ from torchvision import transforms
 import numpy as np
 import csv
 import re
+import matplotlib.pyplot as plt
+import matplotlib
+
 
 from sklearn.model_selection import train_test_split
 
@@ -23,6 +26,7 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
     header = ['path', 'drums', 'genre', 'label']
     X, y = [], []
     # data = ["/", "nod", "cla", "pia"]
+    DEBUG_CSV_SIZE = 100
          
     # Write data
     for root, subdirectories, _ in os.walk(dataset_path):
@@ -49,6 +53,15 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
                     X.append([path, drums, genre])
                     y.append([label])
 
+                    if len(X) == DEBUG_CSV_SIZE:
+                        break
+                if len(X) == DEBUG_CSV_SIZE:
+                        break
+            if len(X) == DEBUG_CSV_SIZE:
+                        break
+        if len(X) == DEBUG_CSV_SIZE:
+                        break
+
     # Converting arrays to numpy
     X = np.array(X)
     y = np.array(y)
@@ -62,11 +75,11 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
     writeToCSV(csv_path=irmas_csv_path+'irmas_val.csv', header=header, data=np.append(X_val, y_val, axis=1))
     writeToCSV(csv_path=irmas_csv_path+'irmas_test.csv', header=header, data=np.append(X_test, y_test, axis=1))
 
-def loadDataset(num_features):
+def loadDataset(n_mfcc):
     train_dataset = IrmasDataset(
         dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_train.csv',
         transform = transforms.Compose([
-            ExtractMFCC(num_features=num_features),
+            ExtractMFCC(num_features=n_mfcc),
             ToTensor()
         ]),
         generate_csv=True
@@ -74,7 +87,7 @@ def loadDataset(num_features):
     val_dataset = IrmasDataset(
         dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_val.csv',
         transform = transforms.Compose([
-            ExtractMFCC(num_features=num_features),
+            ExtractMFCC(num_features=n_mfcc),
             ToTensor()
         ]),
         generate_csv=True
@@ -82,10 +95,30 @@ def loadDataset(num_features):
     test_dataset = IrmasDataset(
         dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_test.csv',
         transform = transforms.Compose([
-            ExtractMFCC(num_features=num_features),
+            ExtractMFCC(num_features=n_mfcc),
             ToTensor()
         ]),
         generate_csv=True
     )
 
     return train_dataset, val_dataset, test_dataset
+
+def plotImage(x, y, title='', x_label='', y_label='', show=True, save=False):
+    # Disables showing plot if show==False
+    plt.ioff()
+
+    # Add title and axis names
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+
+    # Plot
+    plt.plot(x, y)
+
+    # Show/Save plot
+    if save:
+        plt.savefig(SAVED_RESULTS_PATH + title + '.png')
+    if show:
+        plt.show()
+
+    plt.close()

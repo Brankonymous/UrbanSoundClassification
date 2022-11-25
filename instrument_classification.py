@@ -22,13 +22,16 @@ def test(config):
 def custom_test(config):
     pass
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Common params
-    parser.add_argument("--type", choices=[m.name for m in ModelType], type=str, help="Input TRAIN, TEST or CUSTOM_TEST for type of classification", default=ModelType.TRAIN.name)
-    parser.add_argument("--model_name", choices=[m.name for m in SupportedModels], type=str, help="Neural network (model) to use", default=SupportedModels.LINEAR.name)
-    parser.add_argument("--make_csv", help="Generate csv files for training, validation and test", default=True, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.TRAIN.name)
+    parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.LINEAR.name)
+    parser.add_argument('--make_csv', help='Generate csv files for training, validation and test', default=True, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--show_results', help='Plot loss and accuracy info during training', default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--save_results', help='Save loss and accuracy info during training', default=True, action=argparse.BooleanOptionalAction)
+    parser.add_argument('--save_model', help='Save model during training', default=True, action=argparse.BooleanOptionalAction)
 
     # Wrapping configuration into a dictionary
     args = parser.parse_args()
@@ -38,13 +41,12 @@ if __name__ == "__main__":
 
     # Generate csv if --make_csv is included
     if (config['make_csv']):
-        print("?")
         utils.parseIrmasDataset(irmas_csv_path=IRMAS_DATASET_DIRECTORY, dataset_path=IRMAS_SINGLE_INST_DATASET_PATH)
     
-    if config['type'] == "TRAIN" or config['type'] == "TRAIN_AND_TEST":
+    if config['type'] == 'TRAIN' or config['type'] == 'TRAIN_AND_TEST':
         train(config)
-    elif config['type'] == "TEST" or config['type'] == "TRAIN_AND_TEST":
+    elif config['type'] == 'TEST' or config['type'] == 'TRAIN_AND_TEST':
         test(config)
-    elif config['type'] == "CUSTOM_TEST":
+    elif config['type'] == 'CUSTOM_TEST':
         custom_test(config)
     
