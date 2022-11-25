@@ -16,9 +16,10 @@ class TrainNeuralNetwork():
         self.accuracy = []
 
     def startTrain(self):
+        print("Training model \n")
         if self.config['model_name'] == SupportedModels.LINEAR.name:
             # Initialize dataset
-            train_dataset, val_dataset, test_dataset = utils.loadDataset(n_mfcc=NUM_MFCC_FEATURES)
+            train_dataset, val_dataset, test_dataset = utils.loadDataset(n_mfcc=NUM_MFCC_FEATURES, config=self.config)
 
             # Generate DataLoader
             train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
@@ -29,12 +30,13 @@ class TrainNeuralNetwork():
 
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
             # Train and validate neural network
             for t in range(EPOCHS):
                 print(f'Epoch {t+1}\n-------------------------------')
-                self.trainLoop(train_dataloader, model, loss_fn, optimizer)
+                self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
                 epoch_loss, epoch_accuracy = self.valLoop(val_dataloader, model, loss_fn)
 
                 self.loss.append(epoch_loss)
@@ -53,9 +55,11 @@ class TrainNeuralNetwork():
         elif self.config['model_name'] == SupportedModels.CNN.name:
             pass
 
-    def trainLoop(self, dataloader, model, loss_fn, optimizer):
+    def trainLoop(self, dataloader, model, loss_fn, optimizer, scheduler):
         # Traverse trough batches
         size = len(dataloader.dataset)
+        model.train()
+
         for batch_idx, sample in enumerate(dataloader):
             X, y = sample['input'], sample['label']
 
@@ -70,11 +74,15 @@ class TrainNeuralNetwork():
 
             # Output results
             if batch_idx % 10 == 0:
-                loss, current = loss.item(), batch_idx * len(X)
-                print(f'loss: {loss:>7f}  [{current:>5d}/{size:>5d}]')
+                loss, current = loss.item(), min(size, batch_idx * BATCH_SIZE)
+                print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}')
+        
+        scheduler.step()
 
     def valLoop(self, dataloader, model, loss_fn):
         size = len(dataloader.dataset)
+        model.eval()
+        
         num_batches = len(dataloader)
         test_loss, accuracy = 0, 0
 
@@ -89,7 +97,7 @@ class TrainNeuralNetwork():
 
         test_loss /= num_batches
         accuracy /= size
-        accuracy *= 100 * 100
+        accuracy *= 100
         print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n')
 
         return test_loss, accuracy

@@ -7,6 +7,7 @@ import numpy as np
 import torch
 
 from train import TrainNeuralNetwork
+from test import TestNeuralNetwork
 
 import utils.utils as utils
 from utils.constants import *
@@ -17,7 +18,8 @@ def train(config):
     trainNeuralNet.startTrain()
 
 def test(config):
-    pass
+    testNeuralNet = TestNeuralNetwork(config=config)
+    testNeuralNet.startTest()
 
 def custom_test(config):
     pass
@@ -45,8 +47,8 @@ if __name__ == '__main__':
     
     if config['type'] == 'TRAIN' or config['type'] == 'TRAIN_AND_TEST':
         train(config)
-    elif config['type'] == 'TEST' or config['type'] == 'TRAIN_AND_TEST':
+    if config['type'] == 'TEST' or config['type'] == 'TRAIN_AND_TEST':
         test(config)
-    elif config['type'] == 'CUSTOM_TEST':
+    if config['type'] == 'CUSTOM_TEST':
         custom_test(config)
     

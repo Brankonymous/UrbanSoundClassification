@@ -7,7 +7,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 from utils.constants import *
 
-class ExtractMFCC(object):
+class ExtractMFCC1D(object):
     # Convert audio sample to MFCC Spectogram and calculate median value in every feature
     def __init__(self, num_features=NUM_MFCC_FEATURES):
         self.num_features = num_features
@@ -22,17 +22,13 @@ class ExtractMFCC(object):
         mfcc_features = processing.cmvn(mfcc_features)
         mfcc_features = np.mean(mfcc_features, axis=1)
 
-        # Normalize feature
-        mfcc_features = mfcc_features / np.linalg.norm(mfcc_features)
-
         sample['input'].append(mfcc_features)
 
         return sample
 
 
 class ToTensor(object):
-    # Covert sample features and output into tensor
-
+    # Convert sample features and output into tensor
     def __call__(self, sample):
         sample['input'] = torch.from_numpy(np.array(sample['input']).ravel())
         sample['label'] = torch.from_numpy(np.array(sample['label']))
