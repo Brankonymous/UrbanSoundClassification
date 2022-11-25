@@ -15,14 +15,20 @@ SAVED_RESULTS_PATH = "data/results/"
 # Model constants
 NUM_WORKERS = 0
 BATCH_SIZE = 64
-LEARNING_RATE = 1e-2
 EPOCHS = 5
+LEARNING_RATE = 1e-1
+LR_STEP_SIZE = 10
+WEIGHT_DECAY = 1e-5
 
+<<<<<<< HEAD
 # CNN constants
 IMAGE_SIZE = 128
 
 
 NUM_MFCC_FEATURES = 20
+=======
+NUM_MFCC_FEATURES = 30
+>>>>>>> a949362b3d3a7c70e9b41dd1cbac01db93b75d57
 
 
 LABEL = ["cel", "cla", "flu", "gac", "gel", "org", "pia", "sax", "tru", "vio", "voi"]
@@ -64,5 +70,3 @@ class SupportedModels(enum.Enum):
     CNN = 1
 
 SUPPORTED_AUDIO_FORMATS = ["wav", "mp3"]
-
-# TODO Check the directories

@@ -9,12 +9,14 @@ class LinearNeuralNetwork(nn.Module):
         super(LinearNeuralNetwork, self).__init__()
 
         self.flatten = nn.Flatten()
+        
         self.linearReluStack = nn.Sequential(
             nn.Linear(input_size, 16),
             nn.ReLU(),
             nn.Linear(16, 20),
             nn.ReLU(),
-            nn.Linear(20, 11)
+            nn.Linear(20, 11),
+            nn.Softmax(dim=1)
         )
 
     def forward(self, x):

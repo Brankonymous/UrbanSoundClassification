@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torchaudio
 from torchvision import transforms
-from .custom_transforms import ExtractMFCC, ToTensor
+from .custom_transforms import ExtractMFCC1D, ToTensor
 import librosa
 
 import numpy as np
@@ -32,7 +32,6 @@ class IrmasDataset(Dataset):
     
     def __getitem__(self, idx):
         # Get sample with index `idx`
-
         if (torch.is_tensor(idx)):
             idx = idx.tolist()
 
