@@ -23,7 +23,11 @@ LEARNING_RATE = 1e-2
 LR_STEP_SIZE = 50
 WEIGHT_DECAY = 1e-5
 
-NUM_MFCC_FEATURES = 30
+# CNN constants
+IMAGE_SIZE = 128
+
+
+NUM_MFCC_FEATURES = 20
 
 
 LABEL = ["cel", "cla", "flu", "gac", "gel", "org", "pia", "sax", "tru", "vio", "voi"]
