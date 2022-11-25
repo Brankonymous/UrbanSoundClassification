@@ -17,9 +17,9 @@ class TrainNeuralNetwork():
             train_dataset, val_dataset, test_dataset = utils.loadDataset(num_features=NUM_MFCC_FEATURES)
 
             # Generate DataLoader
-            train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
-            val_dataset = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
-            test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+            train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+            val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+            test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
 
             # Model
             model = LinearNeuralNetwork(input_size=NUM_MFCC_FEATURES)
@@ -28,14 +28,15 @@ class TrainNeuralNetwork():
             loss_fn = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-            # Train neural network
+            # Train and validate neural network
             for t in range(EPOCHS):
                 print(f"Epoch {t+1}\n-------------------------------")
                 self.trainLoop(train_dataloader, model, loss_fn, optimizer)
+                self.valLoop(val_dataloader, model, loss_fn)
 
 
         elif self.config["model_name"] == SupportedModels.CNN.name:
-            print("CNN")
+            pass
 
     def trainLoop(self, dataloader, model, loss_fn, optimizer):
         # Traverse trough batches
@@ -63,7 +64,7 @@ class TrainNeuralNetwork():
         test_loss, correct = 0, 0
 
         with torch.no_grad():
-            for _, sample in dataloader:
+            for _, sample in enumerate(dataloader):
                 X, y = sample['mfcc'], sample['label']
 
                 pred = model(X)

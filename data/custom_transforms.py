@@ -1,6 +1,7 @@
 import librosa
 import os, sys
 import numpy as np
+from speechpy import processing
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -15,7 +16,12 @@ class ExtractMFCC(object):
         audio_sample = sample['audio']
 
         mfcc_features = librosa.feature.mfcc(y=audio_sample, sr=sample['sample_rate'], n_mfcc=self.num_features)
+        mfcc_features = processing.cmvn(mfcc_features)
         mfcc_features = np.median(mfcc_features, axis=1)
+
+        # Normalize feature
+        mfcc_features = mfcc_features / np.linalg.norm(mfcc_features)
+        # print(mfcc_features)
 
         sample['mfcc'] = mfcc_features
 
