@@ -18,10 +18,10 @@ NUM_CLASSES = 2
 # Model constants
 NUM_WORKERS = 0
 BATCH_SIZE = 16
-EPOCHS = 10
-LEARNING_RATE = 1e-2
+EPOCHS = 15
+LEARNING_RATE = 1e-5
 LR_STEP_SIZE = 5
-WEIGHT_DECAY = 1e-5
+WEIGHT_DECAY = 0
 
 # CNN constants
 IMAGE_SIZE = 64
@@ -32,35 +32,23 @@ FLAG_SPEC_CENT = True
 FLAG_SPEC_BW = True
 FLAG_ROLLOF = True
 FLAG_ZERO_CR = True
-NUM_MFCC_FEATURES = 20
-NUM_MFCC2D_FEATURES = 64
 
-LABEL_NAME = ["flute", "electric guitar", "organ", "piano", "trumpet", "saxophone", "voice", "clarinet", "acoustic guitar", "cello", "violin"]
+# Fully Connected Network and CNN Feature
+NUM_MFCC_FEATURES = 26
+
+LABEL_NAME = ["flute", "trumpet", "organ", "piano", "electric guitar", "saxophone", "voice", "clarinet", "acoustic guitar", "cello", "violin"]
 LABEL_MAPPING = {
     "flu": 0,
-    "gel": 1,
-    "org": 2,
-    "pia": 3,
-    "tru": 4,
+    "tru": 1,
+    "gel": 2,
+    "org": 3,
+    "pia": 4,
     "sax": 5,
     "voi": 6,
     "cla": 7,
     "gac": 8,
     "cel": 9,
     "vio": 10
-}
-REAL_LABEL_MAPPING = {
-    "cel": "cello",
-    "cla": "clarinet",
-    "flu": "flute",
-    "gac": "acoustic guitar",
-    "gel": "electric guitar",
-    "org": "organ",
-    "pia": "piano",
-    "sax": "saxophone",
-    "tru": "trumpet",
-    "vio": "violin",
-    "voi": "voice"
 }
 
 class ModelType(enum.Enum):
@@ -72,5 +60,3 @@ class ModelType(enum.Enum):
 class SupportedModels(enum.Enum):
     LINEAR = 0
     CNN = 1
-
-SUPPORTED_AUDIO_FORMATS = ["wav", "mp3"]

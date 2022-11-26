@@ -19,13 +19,14 @@ class TestNeuralNetwork():
 
     def startTest(self):
         print("Testing model \n")
+            
+        # Initialize dataset
+        _, _, test_dataset = utils.loadDataset(config=self.config)
+
+        # Generate DataLoader
+        test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+
         if self.config['model_name'] == SupportedModels.LINEAR.name:
-            # Initialize dataset
-            _, _, test_dataset = utils.loadDataset(config=self.config)
-
-            # Generate DataLoader
-            test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-
             # Model
             model = torch.load(SAVED_MODEL_PATH + self.config['model_name'] + '.pt')
 
@@ -37,7 +38,16 @@ class TestNeuralNetwork():
             utils.plotConfusionMatrix(self.conf_mat)
         
         elif self.config['model_name'] == SupportedModels.CNN.name:
-                pass
+            # Model
+            model = torch.load(SAVED_MODEL_PATH + self.config['model_name'] + '.pt')
+
+            # Initialize the loss function
+            loss_fn = nn.CrossEntropyLoss()
+
+            self.testLoop(test_dataloader, model, loss_fn)
+
+            utils.plotConfusionMatrix(self.conf_mat)
+
 
     def testLoop(self, dataloader, model, loss_fn):
         size = len(dataloader.dataset)
@@ -56,9 +66,9 @@ class TestNeuralNetwork():
                 
                 pred = pred.argmax(1)
                 accuracy += (pred == y).type(torch.float).sum().item()
-                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro')
-                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro')
-                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro')
+                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
+                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
+                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
 
                 # Debug output
                 print(f'Testing...: [{min(size, batch_idx * BATCH_SIZE)}/{size}]')

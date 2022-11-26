@@ -129,9 +129,9 @@ class TrainNeuralNetwork():
                 pred = pred.argmax(1)
                 accuracy += (pred == y).type(torch.float).sum().item()
 
-                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted')
-                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted')
-                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted')
+                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
+                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
+                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
 
         test_loss /= num_batches
 
