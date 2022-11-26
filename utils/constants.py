@@ -13,37 +13,41 @@ SAVED_MODEL_PATH = "models/saved_models/"
 SAVED_RESULTS_PATH = "data/results/"
 
 # Common
-NUM_CLASSES = 11
+NUM_CLASSES = 2
 
 # Model constants
 NUM_WORKERS = 0
-BATCH_SIZE = 64
-EPOCHS = 100
+BATCH_SIZE = 16
+EPOCHS = 10
 LEARNING_RATE = 1e-2
-LR_STEP_SIZE = 50
+LR_STEP_SIZE = 5
 WEIGHT_DECAY = 1e-5
 
 # CNN constants
 IMAGE_SIZE = 64
 
-
+# Fully Connected Network features
+FLAG_RMS = True
+FLAG_SPEC_CENT = True
+FLAG_SPEC_BW = True
+FLAG_ROLLOF = True
+FLAG_ZERO_CR = True
 NUM_MFCC_FEATURES = 20
 NUM_MFCC2D_FEATURES = 64
 
-
-LABEL = ["cel", "cla", "flu", "gac", "gel", "org", "pia", "sax", "tru", "vio", "voi"]
+LABEL_NAME = ["flute", "electric guitar", "organ", "piano", "trumpet", "saxophone", "voice", "clarinet", "acoustic guitar", "cello", "violin"]
 LABEL_MAPPING = {
-    "cel": 0,
-    "cla": 1,
-    "flu": 2,
-    "gac": 3,
-    "gel": 4,
-    "org": 5,
-    "pia": 6,
-    "sax": 7,
-    "tru": 8,
-    "vio": 9,
-    "voi": 10
+    "flu": 0,
+    "gel": 1,
+    "org": 2,
+    "pia": 3,
+    "tru": 4,
+    "sax": 5,
+    "voi": 6,
+    "cla": 7,
+    "gac": 8,
+    "cel": 9,
+    "vio": 10
 }
 REAL_LABEL_MAPPING = {
     "cel": "cello",

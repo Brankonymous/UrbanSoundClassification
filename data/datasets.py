@@ -1,14 +1,9 @@
 from torch import nn
 from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
-import torchaudio
-from torchvision import transforms
-from .custom_transforms import ExtractMFCC1D, ToTensor
 import librosa
 
 import numpy as np
 import pandas as pd
-import csv
 
 import os, sys, re
 
@@ -41,19 +36,15 @@ class IrmasDataset(Dataset):
         label = self.dataset_csv.iloc[idx, 3]
 
         audio_sample, sample_rate = librosa.load(self.dataset_csv.iloc[idx, 0])
-        CNN_audio_sample, CNN_sample_rate = torchaudio.load(self.dataset_csv.iloc[idx,0])
 
         # Get useful data
         sample = {
             'path': path, 
             'audio': audio_sample,
-            'CNN_audio' : CNN_audio_sample,
-            'CNN_sample_rate' : CNN_sample_rate,
             'sample_rate': sample_rate,
             'drums': drums,
             'genre': genre,
             'input': [],
-            'CNN_input' : [],
             'label': label
         }
 
@@ -62,4 +53,4 @@ class IrmasDataset(Dataset):
             sample = self.transform(sample)
 
         return sample
-    
+

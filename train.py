@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 
 import numpy as np
 import datetime
+from sklearn.metrics import f1_score, precision_score, recall_score
 
 from models.definitions.cnn_model import ConvNeuralNetwork
 from models.definitions.linear_model import LinearNeuralNetwork
@@ -14,20 +15,22 @@ class TrainNeuralNetwork():
     def __init__(self, config):
         self.config = config
         self.loss = []
-        self.accuracy = []
+        self.accuracy, self.recall, self.precision, self.F1 = [], [], [], []
 
     def startTrain(self):
         print("Training model \n")
+            
+        # Initialize dataset
+        train_dataset, val_dataset, test_dataset = utils.loadDataset(config=self.config)
+
+        # Generate DataLoader
+        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+
         if self.config['model_name'] == SupportedModels.LINEAR.name:
-            # Initialize dataset
-            train_dataset, val_dataset, test_dataset = utils.loadDataset(n_mfcc=NUM_MFCC_FEATURES, config=self.config)
-
-            # Generate DataLoader
-            train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-            val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-
             # Model
-            model = LinearNeuralNetwork(input_size=NUM_MFCC_FEATURES)
+            input_size = NUM_MFCC_FEATURES + FLAG_RMS + FLAG_ROLLOF + FLAG_SPEC_CENT + FLAG_SPEC_BW + FLAG_ZERO_CR
+            model = LinearNeuralNetwork(input_size=input_size)
 
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
@@ -37,37 +40,24 @@ class TrainNeuralNetwork():
             # Train and validate neural network
             start_time = datetime.datetime.now()
             for t in range(EPOCHS):
-                print(f'Epoch {t+1}\n-------------------------------')
+                # Print info
                 curr_time = datetime.datetime.now()
+                print(f'Epoch {t+1}\n-------------------------------')
                 print(f'Current time: {curr_time.time()} / Time elapsed from beggining: {curr_time-start_time}')
 
+                # Train and validate epoch
                 self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
-                epoch_loss, epoch_accuracy = self.valLoop(val_dataloader, model, loss_fn)
+                self.valLoop(val_dataloader, model, loss_fn)
 
-                self.loss.append(epoch_loss)
-                self.accuracy.append(epoch_accuracy)
-
-            if self.config['show_results'] or self.config['save_results']:
-                show_flag = True if self.config['show_results'] else False
-                save_flag = True if self.config['save_results'] else False
-
-                utils.plotImage(x=np.arange(EPOCHS, dtype=np.int64), y=self.loss, title='Loss (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Cross entropy loss', show=show_flag, save=save_flag)
-                utils.plotImage(x=np.arange(EPOCHS, dtype=np.int64), y=self.accuracy, title='Accuracy (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', show=show_flag, save=save_flag)
-
-            if self.config['save_model'] or self.config['type'] == ModelType.TRAIN_AND_TEST.name:
-                torch.save(model, SAVED_MODEL_PATH + self.config['model_name'] + '.pt')
-
-        elif self.config['model_name'] == SupportedModels.CNN.name:
+                # Check if model is learning compared to previous epoch
+                # if len(self.loss) != 0 and self.loss[-1] > epoch_loss:
+                #    break
             
-            # Initialize dataset
-            train_dataset, val_dataset, test_dataset = utils.loadDataset(n_mfcc=NUM_MFCC2D_FEATURES, config=self.config)
-
-            # Generate DataLoader
-            train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-            val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-
+            ###### END OF FCNN #######
+                
+        elif self.config['model_name'] == SupportedModels.CNN.name:
             #Model
-            model = ConvNeuralNetwork()
+            model = ConvNeuralNetwork(shape=train_dataset[0]['input'].shape)
             
              # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
@@ -79,21 +69,24 @@ class TrainNeuralNetwork():
             for t in range(EPOCHS):
                 print(f'Epoch {t+1}\n-------------------------------')
                 self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
-                epoch_loss, epoch_accuracy = self.valLoop(val_dataloader, model, loss_fn)
+                self.valLoop(val_dataloader, model, loss_fn)
 
-                self.loss.append(epoch_loss)
-                self.accuracy.append(epoch_accuracy)
+            ###### END OF CNN #######
 
-            if self.config['show_results'] or self.config['save_results']:
-                show_flag = True if self.config['show_results'] else False
-                save_flag = True if self.config['save_results'] else False
+        # Plot and save results if flags are true
+        if self.config['show_results'] or self.config['save_results']:
+            flag_show = True if self.config['show_results'] else False
+            flag_save = True if self.config['save_results'] else False
 
-                utils.plotImage(x=np.arange(EPOCHS, dtype=np.int64), y=self.loss, title='Loss (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Cross entropy loss', show=show_flag, save=save_flag)
-                utils.plotImage(x=np.arange(EPOCHS, dtype=np.int64), y=self.accuracy, title='Accuracy (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', show=show_flag, save=save_flag)
+            utils.plotImage(x=np.arange(len(self.loss), dtype=np.int64), y=self.loss, title='Loss (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Cross entropy loss', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.accuracy), dtype=np.int64), y=self.accuracy, title='Accuracy (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.precision), dtype=np.int64), y=self.precision, title='Precision (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.recall), dtype=np.int64), y=self.recall, title='Recall (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.F1), dtype=np.int64), y=self.F1, title='F1 Score (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
 
-            if self.config['save_model'] or self.config['type'] == ModelType.TRAIN_AND_TEST.name:
-                torch.save(model, SAVED_MODEL_PATH + self.config['model_name'] + '.pt')
-        #pass
+        # Save model if flag is true
+        if self.config['save_model'] or self.config['type'] == ModelType.TRAIN_AND_TEST.name:
+            torch.save(model, SAVED_MODEL_PATH + self.config['model_name'] + '.pt')
 
     def trainLoop(self, dataloader, model, loss_fn, optimizer, scheduler):
         # Traverse trough batches
@@ -102,7 +95,6 @@ class TrainNeuralNetwork():
 
         for batch_idx, sample in enumerate(dataloader):
             X, y = sample['input'], sample['label']
-            print(X.shape)
             # Compute prediction and loss
             pred = model(X)
             loss = loss_fn(pred, y)
@@ -124,7 +116,7 @@ class TrainNeuralNetwork():
         model.eval()
         
         num_batches = len(dataloader)
-        test_loss, accuracy = 0, 0
+        test_loss, accuracy, precision, recall, F1 = 0, 0, 0, 0, 0
 
         with torch.no_grad():
             for _, sample in enumerate(dataloader):
@@ -133,12 +125,32 @@ class TrainNeuralNetwork():
                 pred = model(X)
                 
                 test_loss += loss_fn(pred, y).item()
-                accuracy += (pred.argmax(1) == y).type(torch.float).sum().item()
+
+                pred = pred.argmax(1)
+                accuracy += (pred == y).type(torch.float).sum().item()
+
+                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted')
+                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted')
+                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted')
 
         test_loss /= num_batches
-        accuracy /= size
-        accuracy *= 100
-        print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n')
 
-        return test_loss, accuracy
-    
+        accuracy /= size
+        recall /= size
+        precision /= size
+        F1 /= size
+
+        accuracy *= 100
+        recall *= 100
+        precision *= 100
+        F1 *= 100
+
+        print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg Loss: {test_loss:>8f} \n')
+        print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
+
+        # Append results
+        self.loss.append(test_loss)
+        self.accuracy.append(accuracy)
+        self.recall.append(recall)
+        self.precision.append(precision)
+        self.F1.append(F1)
