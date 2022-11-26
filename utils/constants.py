@@ -23,9 +23,6 @@ LEARNING_RATE = 1e-5
 LR_STEP_SIZE = 5
 WEIGHT_DECAY = 0
 
-# CNN constants
-IMAGE_SIZE = 64
-
 # Fully Connected Network features
 FLAG_RMS = True
 FLAG_SPEC_CENT = True

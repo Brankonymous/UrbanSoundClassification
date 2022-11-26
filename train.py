@@ -37,23 +37,7 @@ class TrainNeuralNetwork():
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
-            # Train and validate neural network
-            start_time = datetime.datetime.now()
-            for t in range(EPOCHS):
-                # Print info
-                curr_time = datetime.datetime.now()
-                print(f'Epoch {t+1}\n-------------------------------')
-                print(f'Current time: {curr_time.time()} / Time elapsed from beggining: {curr_time-start_time}')
-
-                # Train and validate epoch
-                self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
-                self.valLoop(val_dataloader, model, loss_fn)
-
-                # Check if model is learning compared to previous epoch
-                # if len(self.loss) != 0 and self.loss[-1] > epoch_loss:
-                #    break
-            
-            ###### END OF FCNN #######
+            ###### END OF Fully Connected Neural Network #######
                 
         elif self.config['model_name'] == SupportedModels.CNN.name:
             #Model
@@ -64,14 +48,23 @@ class TrainNeuralNetwork():
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
-            #Train and validate CNN
-
-            for t in range(EPOCHS):
-                print(f'Epoch {t+1}\n-------------------------------')
-                self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
-                self.valLoop(val_dataloader, model, loss_fn)
-
             ###### END OF CNN #######
+
+        # Train and validate neural network
+        start_time = datetime.datetime.now()
+        for t in range(EPOCHS):
+            # Print info
+            curr_time = datetime.datetime.now()
+            print(f'Epoch {t+1}\n-------------------------------')
+            print(f'Current time: {curr_time.time()} / Time elapsed from beggining: {curr_time-start_time}')
+
+            # Train and validate epoch
+            self.trainLoop(train_dataloader, model, loss_fn, optimizer, scheduler)
+            self.valLoop(val_dataloader, model, loss_fn)
+
+            # Check if model is learning compared to previous epoch
+            # if len(self.loss) != 0 and self.loss[-1] > epoch_loss:
+            #    break
 
         # Plot and save results if flags are true
         if self.config['show_results'] or self.config['save_results']:
@@ -146,7 +139,7 @@ class TrainNeuralNetwork():
         F1 *= 100
 
         print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg Loss: {test_loss:>8f} \n')
-        print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
+        # print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
 
         # Append results
         self.loss.append(test_loss)
