@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     # Common params
     parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.TRAIN.name)
-    parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.LINEAR.name)
+    parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.CNN.name) #default=SupportedModels.LINEAR.name
     parser.add_argument('--make_csv', help='Generate csv files for training, validation and test', default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument('--show_results', help='Plot loss and accuracy info during training', default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument('--save_results', help='Save loss and accuracy info during training', default=True, action=argparse.BooleanOptionalAction)
@@ -51,4 +51,6 @@ if __name__ == '__main__':
         test(config)
     if config['type'] == 'CUSTOM_TEST':
         custom_test(config)
+    
+
     

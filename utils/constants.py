@@ -21,10 +21,11 @@ LR_STEP_SIZE = 10
 WEIGHT_DECAY = 1e-5
 
 # CNN constants
-IMAGE_SIZE = 128
+IMAGE_SIZE = 64
 
 
 NUM_MFCC_FEATURES = 20
+NUM_MFCC2D_FEATURES = 64
 
 
 LABEL = ["cel", "cla", "flu", "gac", "gel", "org", "pia", "sax", "tru", "vio", "voi"]

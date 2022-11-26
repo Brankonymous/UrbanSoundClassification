@@ -1,5 +1,5 @@
 from data.preprocess_data import IrmasDataset
-from data.custom_transforms import ExtractMFCC1D, ToTensor
+from data.custom_transforms import ExtractMFCC1D, ExtractMFCC2D, ToTensor, ToTensorCNN
 from torchvision import transforms
 
 import numpy as np
@@ -49,8 +49,19 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
                             genre = category
                         
                     # Write to csv
+
+
                     X.append([path, drums, genre])
                     y.append([label])
+                    if len(X) >= 100:
+                        break
+                if len(X) >= 100:
+                    break
+            if len(X) >= 100:
+                break
+        if len(X) >= 100:
+            break
+
 
     # Converting arrays to numpy
     X = np.array(X)
@@ -92,7 +103,33 @@ def loadDataset(n_mfcc, config):
             generate_csv=True
         )
     elif config['model_name'] == SupportedModels.CNN.name:
-            pass
+            train_dataset = IrmasDataset(
+            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_train.csv',
+            transform = transforms.Compose([
+                ExtractMFCC2D(),
+                ToTensorCNN()
+            ]),
+            generate_csv=True
+        )
+            val_dataset = IrmasDataset(
+            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_val.csv',
+            transform = transforms.Compose([
+                ExtractMFCC2D(),
+                ToTensorCNN()
+            ]),
+            generate_csv=True
+        )
+            test_dataset = IrmasDataset(
+            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_test.csv',
+            transform = transforms.Compose([
+                ExtractMFCC2D(),
+                ToTensorCNN()
+            ]),
+            generate_csv=True
+        )
+
+
+           # pass
 
     return train_dataset, val_dataset, test_dataset
 
