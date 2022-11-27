@@ -52,14 +52,39 @@ class IrmasDataset(Dataset):
         return sample
 
 class UrbanSounds8K(Dataset):
-    def __init__(self,dataset_items_path,dataset_csv_path, transform = None):
+    def __init__(self, dataset_items_path, dataset_csv_path ,num_samples, transform = None):
 
         self.dataset_csv = pd.read_csv(dataset_csv_path)
         self.transform = transform
         self.dataset_items_path = dataset_items_path
+        self.num_samples = num_samples
     
     def __len__(self):
         return len(self.dataset_csv)
+
+
+    # Lowers the depth
+    def _mix_if_needed(self,signal):
+        if signal.shape[0] > 1:
+            signal = torch.mean(signal, dim = 0, keepdim = True)
+        return signal
+
+    # ( 1 , x ) --> (1 , self.num_samples )
+    def _cut_down_if_needed(self,signal):
+        if signal.shape[1] > self.num_samples:
+            signal = signal[:, :self.num_samples]
+        return signal
+
+    def _pad_right_if_needed(self,signal):
+        length = signal.shape[1]
+
+        if length < self.num_samples:
+            to_pad = self.num_samples - length
+            last_dim_padding = (0, to_pad)
+
+            signal = nn.functional.pad(signal, last_dim_padding)
+        return signal
+
 
     def __getitem__(self, index):
 
@@ -68,13 +93,18 @@ class UrbanSounds8K(Dataset):
 
         item = self.dataset_csv.iloc[idx, 0]
         fold = self.dataset_csv.iloc[idx, 5]
-        classID = self.dataset_csv.iloc[idx, 6]
+        label = self.dataset_csv.iloc[idx, 7]
 
         path = os.path.join(self.dataset_items_path, 'fold' + str(fold), item)
 
         audio_sample, sample_rate = librosa.load(path)
 
         #PADDING TRANSFORMS NEEDED
+
+        audio_sample = self._mix_if_needed(audio_sample)
+        audio_sample = self._cut_down_if_needed(audio_sample)
+        audio_sample = self._pad_right_if_needed(audio_sample)
+
 
         # Get useful data
         sample = {
@@ -84,4 +114,4 @@ class UrbanSounds8K(Dataset):
             'label': label
         }
 
-        return None
+        return sample
