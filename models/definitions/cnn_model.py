@@ -32,5 +32,5 @@ class ConvNeuralNetwork(nn.Module):
         x = self.convStack(x)
         x = self.linearStack(x)
         
-        print(x[0])
+        # print(x[0])
         return x
