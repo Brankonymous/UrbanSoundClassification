@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     # Generate csv if --make_csv is included
     if (config['make_csv']):
-        utils.parseIrmasDataset(irmas_csv_path=IRMAS_DATASET_DIRECTORY, dataset_path=IRMAS_SINGLE_INST_DATASET_PATH)
+        utils.parseDataset(csv_path=DATASET_DIRECTORY, dataset_path=DATASET_PATH)
     
     if config['type'] == 'TRAIN' or config['type'] == 'TRAIN_AND_TEST':
         train(config)

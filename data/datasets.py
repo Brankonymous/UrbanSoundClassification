@@ -35,15 +35,12 @@ class IrmasDataset(Dataset):
         genre = self.dataset_csv.iloc[idx, 2]
         label = self.dataset_csv.iloc[idx, 3]
 
-        audio_sample, sample_rate = librosa.load(self.dataset_csv.iloc[idx, 0])
+        audio_sample, sample_rate = librosa.load(path)
 
         # Get useful data
         sample = {
-            'path': path, 
             'audio': audio_sample,
             'sample_rate': sample_rate,
-            'drums': drums,
-            'genre': genre,
             'input': [],
             'label': label
         }
