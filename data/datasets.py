@@ -72,7 +72,7 @@ class UrbanSounds8K(Dataset):
 
         path = os.path.join(self.dataset_items_path, 'fold' + str(fold), item)
 
-        
+        audio_sample, sample_rate = librosa.load(path)
 
         #PADDING TRANSFORMS NEEDED
 
