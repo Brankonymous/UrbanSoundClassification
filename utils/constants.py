@@ -32,7 +32,10 @@ FLAG_ZERO_CR = True
 # Fully Connected Network and CNN Feature
 NUM_MFCC_FEATURES = 50
 
+
+
 # DATASET SPECIFIC
+# IRMAS DATASET
 IRMAS_DATASET_PATH = 'data/dataset/IRMAS-TrainingData/'
 IRMAS_LABEL_NAME = ['flute', 'trumpet', 'organ', 'piano', 'electric guitar', 'saxophone', 'voice', 'clarinet', 'acoustic guitar', 'cello', 'violin']
 IRMAS_LABEL_MAPPING = {
@@ -48,6 +51,11 @@ IRMAS_LABEL_MAPPING = {
     'cel': 9,
     'vio': 10
 }
+
+#UrbanSound8K DATASET
+
+URBAN_SOUND_8K_PATH_AUDIO = 'data/dataset/UrbanSound8K/audio'
+URBAN_SOUND_8K_PATH_META = 'data/dataset/UrbanSound8K/metadata/UrbanSound8K.csv'
 
 PHILHARM_DATASET_PATH = 'data/dataset/Philharmonia'
 PHILHARM_LABEL_NAME = ['double bass', 'flute', 'guitar', 'saxophone', 'trumpet', 'violin']

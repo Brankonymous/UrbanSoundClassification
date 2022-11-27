@@ -52,10 +52,11 @@ class IrmasDataset(Dataset):
         return sample
 
 class UrbanSounds8K(Dataset):
-    def __init__(self,dataset_path, transform = None):
+    def __init__(self,dataset_items_path,dataset_csv_path, transform = None):
 
-        self.dataset_csv = pd.read_csv(dataset_path)
+        self.dataset_csv = pd.read_csv(dataset_csv_path)
         self.transform = transform
+        self.dataset_items_path = dataset_items_path
     
     def __len__(self):
         return len(self.dataset_csv)
@@ -65,7 +66,22 @@ class UrbanSounds8K(Dataset):
         if (torch.is_tensor(idx)):
             idx = idx.tolist()
 
-        # Dataset to download...
+        item = self.dataset_csv.iloc[idx, 0]
+        fold = self.dataset_csv.iloc[idx, 5]
+        classID = self.dataset_csv.iloc[idx, 6]
 
+        path = os.path.join(self.dataset_items_path, 'fold' + str(fold), item)
+
+        
+
+        #PADDING TRANSFORMS NEEDED
+
+        # Get useful data
+        sample = {
+            'audio': audio_sample,
+            'sample_rate': sample_rate,
+            'input': [],
+            'label': label
+        }
 
         return None
