@@ -54,3 +54,21 @@ class IrmasDataset(Dataset):
 
         return sample
 
+class UrbanSounds8K(Dataset):
+    def __init__(self,dataset_path, transform = None):
+
+        self.dataset_csv = pd.read_csv(dataset_path)
+        self.transform = transform
+    
+    def __len__(self):
+        return len(self.dataset_csv)
+
+    def __getitem__(self, index):
+
+        if (torch.is_tensor(idx)):
+            idx = idx.tolist()
+
+        # Dataset to download...
+
+
+        return None
