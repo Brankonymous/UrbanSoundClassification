@@ -25,7 +25,7 @@ def writeToCSV(csv_path, header, data):
         for rows in data:
             writer.writerow(rows)
 
-def parseIrmasDataset(irmas_csv_path, dataset_path):
+def parseDataset(csv_path, dataset_path):
     # Create annotated csv
     # data = ['/', 'nod', 'cla', 'pia']
     header = ['path', 'drums', 'genre', 'label']
@@ -56,7 +56,7 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
                         else:
                             genre = category
                     
-                    if drums == 'dru' or drums == 'nod':
+                    if drums == 'dru':
                         continue
 
                     # Write to csv
@@ -98,14 +98,14 @@ def parseIrmasDataset(irmas_csv_path, dataset_path):
     X_val, X_test, y_val, y_test = train_test_split(X_rem, y_rem, stratify=y_rem, test_size=0.5)
 
     # Write data to csv
-    writeToCSV(csv_path=irmas_csv_path+'irmas_train.csv', header=header, data=np.append(X_train, y_train, axis=1))
-    writeToCSV(csv_path=irmas_csv_path+'irmas_val.csv', header=header, data=np.append(X_val, y_val, axis=1))
-    writeToCSV(csv_path=irmas_csv_path+'irmas_test.csv', header=header, data=np.append(X_test, y_test, axis=1))
+    writeToCSV(csv_path=csv_path+'irmas_train.csv', header=header, data=np.append(X_train, y_train, axis=1))
+    writeToCSV(csv_path=csv_path+'irmas_val.csv', header=header, data=np.append(X_val, y_val, axis=1))
+    writeToCSV(csv_path=csv_path+'irmas_test.csv', header=header, data=np.append(X_test, y_test, axis=1))
 
 def loadDataset(config):
     if config['model_name'] == SupportedModels.LINEAR.name:
         train_dataset = IrmasDataset(
-            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_train.csv',
+            dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
             transform = transforms.Compose([
                 ExtractLinearFeatures(),
                 ToTensor()
@@ -113,7 +113,7 @@ def loadDataset(config):
             generate_csv=True
         )
         val_dataset = IrmasDataset(
-            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_val.csv',
+            dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
             transform = transforms.Compose([
                 ExtractLinearFeatures(),
                 ToTensor()
@@ -121,7 +121,7 @@ def loadDataset(config):
             generate_csv=True
         )
         test_dataset = IrmasDataset(
-            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_test.csv',
+            dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
             transform = transforms.Compose([
                 ExtractLinearFeatures(),
                 ToTensor()
@@ -130,7 +130,7 @@ def loadDataset(config):
         )
     elif config['model_name'] == SupportedModels.CNN.name:
             train_dataset = IrmasDataset(
-            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_train.csv',
+            dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
             transform = transforms.Compose([
                 ExtractMFCC(),
                 ToTensor()
@@ -138,7 +138,7 @@ def loadDataset(config):
             generate_csv=True
         )
             val_dataset = IrmasDataset(
-            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_val.csv',
+            dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
             transform = transforms.Compose([
                 ExtractMFCC(),
                 ToTensor()
@@ -146,7 +146,7 @@ def loadDataset(config):
             generate_csv=True
         )
             test_dataset = IrmasDataset(
-            dataset_path=IRMAS_DATASET_DIRECTORY + 'irmas_test.csv',
+            dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
             transform = transforms.Compose([
                 ExtractMFCC(),
                 ToTensor()

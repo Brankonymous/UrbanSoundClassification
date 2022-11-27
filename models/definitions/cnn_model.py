@@ -22,7 +22,7 @@ class ConvNeuralNetwork(nn.Module):
             nn.Flatten()
         )
         self.linearStack = nn.Sequential(
-            nn.Linear(12288, 512),
+            nn.Linear(24576, 512),
             torch.nn.ReLU(),
             torch.nn.Linear(512, NUM_CLASSES),
             nn.Softmax(dim = 1)
@@ -31,5 +31,6 @@ class ConvNeuralNetwork(nn.Module):
     def forward(self, x):
         x = self.convStack(x)
         x = self.linearStack(x)
-
+        
+        print(x[0])
         return x

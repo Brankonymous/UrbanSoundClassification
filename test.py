@@ -85,6 +85,6 @@ class TestNeuralNetwork():
         accuracy *= 100
 
         print(f'Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n')
-        # print(f'Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
+        # print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
 
         return test_loss, accuracy

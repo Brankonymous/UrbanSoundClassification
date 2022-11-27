@@ -55,9 +55,8 @@ class ExtractMFCC(object):
 
         # Extract MFCC
         mfcc_features = librosa.feature.mfcc(y=np.array(audio_sample), sr=sample['sample_rate'], n_mfcc=self.num_features)
-        
         # Normalize
-        # mfcc_features = processing.cmvn(mfcc_features)
+        mfcc_features = processing.cmvn(mfcc_features)
 
         mfcc_features = np.reshape(mfcc_features, (1, mfcc_features.shape[0], mfcc_features.shape[1]))
         sample['input'] = mfcc_features
