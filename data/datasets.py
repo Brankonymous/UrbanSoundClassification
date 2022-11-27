@@ -1,5 +1,6 @@
 from torch import nn
 from torch.utils.data import Dataset
+import torchaudio
 import librosa
 
 import numpy as np
@@ -52,7 +53,7 @@ class IrmasDataset(Dataset):
         return sample
 
 class UrbanSounds8K(Dataset):
-    def __init__(self, dataset_items_path, dataset_csv_path ,num_samples, transform = None):
+    def __init__(self, dataset_items_path, dataset_csv_path ,num_samples, sample_rate transform = None):
 
         self.dataset_csv = pd.read_csv(dataset_csv_path)
         self.transform = transform
@@ -85,6 +86,11 @@ class UrbanSounds8K(Dataset):
             signal = nn.functional.pad(signal, last_dim_padding)
         return signal
 
+    def _resample_if_needed(self,signal,sr):
+        if sr != self.target_sample_rate:
+            resampler = torchaudio.transforms.Resample(sr,self.target_sample_rate)
+            signal = resampler(signal)
+        return signal
 
     def __getitem__(self, index):
 
@@ -101,6 +107,7 @@ class UrbanSounds8K(Dataset):
 
         #PADDING TRANSFORMS NEEDED
 
+        audio_sample = self._resample_if_needed(audio_sample,sample_rate)
         audio_sample = self._mix_if_needed(audio_sample)
         audio_sample = self._cut_down_if_needed(audio_sample)
         audio_sample = self._pad_right_if_needed(audio_sample)
