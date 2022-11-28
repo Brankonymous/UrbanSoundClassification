@@ -2,6 +2,7 @@ import librosa
 import os, sys
 import numpy as np
 from speechpy import processing
+from utils.constants import *
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -52,13 +53,16 @@ class ExtractMFCC(object):
     
     def __call__(self, sample):
         audio_sample = sample['audio']
-
+        #print(audio_sample.shape,sample['label'])
         # Extract MFCC
-        mfcc_features = librosa.feature.mfcc(y=np.array(audio_sample), sr=sample['sample_rate'], n_mfcc=self.num_features)
+        mfcc_features = librosa.feature.mfcc(y=np.array(audio_sample), sr=sample['sample_rate'], n_mfcc=self.num_features, hop_length = 1024)
         # Normalize
-        mfcc_features = processing.cmvn(mfcc_features)
 
+        mfcc_features = processing.cmvn(mfcc_features)
+       
+        #print(mfcc_features.shape)
         mfcc_features = np.reshape(mfcc_features, (1, mfcc_features.shape[0], mfcc_features.shape[1]))
+        #print(mfcc_features.shape)
         sample['input'] = mfcc_features
 
         return sample

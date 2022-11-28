@@ -23,9 +23,11 @@ class TrainNeuralNetwork():
         # Initialize dataset
         train_dataset, val_dataset, test_dataset = utils.loadDataset(config=self.config)
 
+        
+
         # Generate DataLoader
-        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS) #shuffle = True / changed to false
+        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS) #shuffle = True / changed to false
 
         if self.config['model_name'] == SupportedModels.LINEAR.name:
             # Model
@@ -88,10 +90,12 @@ class TrainNeuralNetwork():
 
         for batch_idx, sample in enumerate(dataloader):
             X, y = sample['input'], sample['label']
-            # Compute prediction and loss
-            pred = model(X)
-            loss = loss_fn(pred, y)
 
+
+            # Compute prediction and loss
+            pred = model(X)        
+            loss = loss_fn(pred.float(), y.float())
+            
             # Backpropagation
             optimizer.zero_grad()
             loss.backward()
@@ -101,7 +105,11 @@ class TrainNeuralNetwork():
             if batch_idx % 10 == 0:
                 loss, current = loss.item(), min(size, batch_idx * BATCH_SIZE)
                 print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}')
-        
+                print('--------------------------------------------------')
+                print(pred)
+                print('--------------------------------------------------')
+                print(y)
+                print('--------------------------------------------------')
         scheduler.step()
 
     def valLoop(self, dataloader, model, loss_fn):
@@ -117,15 +125,17 @@ class TrainNeuralNetwork():
 
                 pred = model(X)
                 
-                test_loss += loss_fn(pred, y).item()
+                
+                test_loss += loss_fn(pred.float(), y.float()).item()
 
                 pred = pred.argmax(1)
+                y = y.argmax(1)
+                
                 accuracy += (pred == y).type(torch.float).sum().item()
 
                 recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
                 precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
                 F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
-
         test_loss /= num_batches
 
         accuracy /= size

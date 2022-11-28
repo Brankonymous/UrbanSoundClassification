@@ -1,6 +1,6 @@
 from data.datasets import IrmasDataset
 from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToTensor
-from data.datasets import IrmasDataset
+from data.datasets import IrmasDataset, UrbanSounds8K
 from torchvision import transforms
 
 import numpy as np
@@ -128,31 +128,67 @@ def loadDataset(config):
             ]),
             generate_csv=True
         )
+        
+    #To be changed if it works
+
     elif config['model_name'] == SupportedModels.CNN.name:
-            train_dataset = IrmasDataset(
-            dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
+            train_dataset = UrbanSounds8K(
+            dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
+            dataset_csv_path = URBAN_SOUND_8K_PATH_META,
+            num_samples = NUM_SAMPLES,
+            sample_rate = SAMPLE_RATE,
             transform = transforms.Compose([
                 ExtractMFCC(),
                 ToTensor()
-            ]),
-            generate_csv=True
+            ])
+            # generate_csv=True
         )
-            val_dataset = IrmasDataset(
-            dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
+            val_dataset = UrbanSounds8K(
+            dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
+            dataset_csv_path = URBAN_SOUND_8K_PATH_META,
+            num_samples = NUM_SAMPLES,
+            sample_rate = SAMPLE_RATE,
             transform = transforms.Compose([
                 ExtractMFCC(),
                 ToTensor()
-            ]),
-            generate_csv=True
+            ])
+            # generate_csv=True
         )
-            test_dataset = IrmasDataset(
-            dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
+            test_dataset = UrbanSounds8K(
+            dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
+            dataset_csv_path = URBAN_SOUND_8K_PATH_META,
+            num_samples = NUM_SAMPLES,
+            sample_rate = SAMPLE_RATE,
             transform = transforms.Compose([
                 ExtractMFCC(),
                 ToTensor()
-            ]),
-            generate_csv=True
+            ])
+            # generate_csv=True
         )
+        #     train_dataset = IrmasDataset(
+        #     dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
+        #     transform = transforms.Compose([
+        #         ExtractMFCC(),
+        #         ToTensor()
+        #     ]),
+        #     generate_csv=True
+        # )
+        #     val_dataset = IrmasDataset(
+        #     dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
+        #     transform = transforms.Compose([
+        #         ExtractMFCC(),
+        #         ToTensor()
+        #     ]),
+        #     generate_csv=True
+        # )
+        #     test_dataset = IrmasDataset(
+        #     dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
+        #     transform = transforms.Compose([
+        #         ExtractMFCC(),
+        #         ToTensor()
+        #     ]),
+        #     generate_csv=True
+        # )
 
     return train_dataset, val_dataset, test_dataset
 
@@ -181,3 +217,7 @@ def plotConfusionMatrix(confusion_matrix, title='Confusion Matrix'):
 
     pp_matrix(df_cm, cmap='Oranges', annot=True)
     plt.close()
+
+#Same as keras
+def to_categorical(y, num_classes):
+    return np.eye(num_classes, dtype='uint8')[y]
