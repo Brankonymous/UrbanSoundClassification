@@ -29,7 +29,7 @@ class TrainNeuralNetwork():
         
 
         # Generate DataLoader
-        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE) #shuffle = True / changed to false
+        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle= True, num_workers= NUM_WORKERS) #shuffle = True / changed to false
         val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE) #shuffle = True / changed to false
 
         if self.config['model_name'] == SupportedModels.LINEAR.name:
@@ -49,7 +49,7 @@ class TrainNeuralNetwork():
             model = ConvNeuralNetwork()
             
              # Initialize the loss and optimizer function
-            loss_fn = nn.CrossEntropyLoss()
+            loss_fn = nn.CrossEntropyLoss(label_smoothing=0.11)
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
@@ -90,6 +90,7 @@ class TrainNeuralNetwork():
         # Traverse trough batches
         size = len(dataloader.dataset)
         model.train()
+        accuracy = 0
 
         for batch_idx, sample in enumerate(dataloader):
 
@@ -105,15 +106,17 @@ class TrainNeuralNetwork():
             loss.backward()
             optimizer.step()
 
+            pred = pred.argmax(1)
+            accuracy += (pred == y).sum().item()
+
             # Output results
             if batch_idx % 10 == 0:
                 loss, current = loss.item(), min(size, batch_idx * BATCH_SIZE)
-                print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}')
+                print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}, train_accuracy: {(accuracy/((1+batch_idx) *BATCH_SIZE)) * 100}%')
                # print('--------------------------------------------------')
                # print(pred)
                 print('--------------------------------------------------')
-                #print(y)
-                #print('--------------------------------------------------')
+                
         scheduler.step()
 
     def valLoop(self, dataloader, model, loss_fn):
@@ -148,7 +151,7 @@ class TrainNeuralNetwork():
                 
         test_loss /= num_batches
 
-        accuracy /= size#accuracy /= size
+        accuracy /= size
         recall /= size
         precision /= size
         F1 /= size
