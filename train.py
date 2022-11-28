@@ -92,8 +92,9 @@ class TrainNeuralNetwork():
         model.train()
 
         for batch_idx, sample in enumerate(dataloader):
-            X, y = sample['input'], sample['label']
 
+            X, y = sample['input'], sample['label']
+            
 
             # Compute prediction and loss
             pred = model(X)        
@@ -108,12 +109,13 @@ class TrainNeuralNetwork():
             if batch_idx % 10 == 0:
                 loss, current = loss.item(), min(size, batch_idx * BATCH_SIZE)
                 print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}')
+               # print('--------------------------------------------------')
+               # print(pred)
                 print('--------------------------------------------------')
-                print(pred)
-                print('--------------------------------------------------')
-                print(y)
-                print('--------------------------------------------------')
+                #print(y)
+                #print('--------------------------------------------------')
         scheduler.step()
+
     def valLoop(self, dataloader, model, loss_fn):
         size = len(dataloader.dataset)
         model.eval()
@@ -122,7 +124,9 @@ class TrainNeuralNetwork():
         test_loss, accuracy, precision, recall, F1 = 0, 0, 0, 0, 0
 
         with torch.no_grad():
-            for _, sample in enumerate(dataloader):
+            for batch_idx, sample in enumerate(dataloader):
+
+                
                 X, y = sample['input'], sample['label']
 
                 pred = model(X)
@@ -133,10 +137,10 @@ class TrainNeuralNetwork():
                 
 
                 pred = pred.argmax(1)
-                y = y.argmax(1)
-                print(y.shape, pred.shape)
+               # y = y.argmax(1)
+               # print(y.shape, pred.shape)
                 
-                accuracy += (pred == y).type(torch.float).sum().item()
+                accuracy += (pred == y).sum().item()
 
                 recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
                 precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
@@ -144,7 +148,7 @@ class TrainNeuralNetwork():
                 
         test_loss /= num_batches
 
-        accuracy /= size
+        accuracy /= size#accuracy /= size
         recall /= size
         precision /= size
         F1 /= size

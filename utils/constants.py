@@ -17,7 +17,7 @@ NUM_CLASSES_8K = 10
 
 # Model constants
 NUM_WORKERS = 0
-BATCH_SIZE = 64
+BATCH_SIZE = 8
 EPOCHS = 40
 LEARNING_RATE = 1e-3
 LR_STEP_SIZE = 5
@@ -57,8 +57,8 @@ IRMAS_LABEL_MAPPING = {
 #UrbanSound8K DATASET
 URBAN_SOUND_8K_PATH_AUDIO = 'data/dataset/UrbanSound8K/audio'
 URBAN_SOUND_8K_PATH_META = 'data/dataset/UrbanSound8K/metadata/UrbanSound8K.csv'
-
-
+URBAN_SOUND_8K_PATH_META_small = 'data/dataset/UrbanSound8K/metadata/64_dataset.csv'
+URBAN_SOUND_8K_PATH_META_bigger = 'data/dataset/UrbanSound8K/metadata/UrbanSound8K_new.csv'
 
 
 # We take 2 seconds of each audio file

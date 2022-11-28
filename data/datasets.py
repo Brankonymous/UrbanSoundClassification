@@ -6,6 +6,7 @@ import librosa
 import numpy as np
 import pandas as pd
 import torch
+from speechpy import processing
 
 import os, sys, re
 
@@ -114,22 +115,26 @@ class UrbanSounds8K(Dataset):
         audio_sample = self._cut_down_if_needed(audio_sample)
         audio_sample = self._pad_right_if_needed(audio_sample)
 
-        label = utils.to_categorical(classID,10)
-        label = torch.from_numpy(label).float()
+        #label = utils.to_categorical(classID,10)
+        #label = torch.from_numpy(label).float()
 
-        
+        if classID != 0:
+            classID = (classID % 2) + 1
 
         if self.transform:
             audio_sample = self.transform(audio_sample)
-        
         
         # Get useful data
         sample = {
             'audio': audio_sample,
             'sample_rate': sample_rate,
             'input': audio_sample,
-            'label': label,
+            'label': classID,
             'class_name':class_name
         }
         #print(sample['label'].shape)
         return sample
+
+
+
+

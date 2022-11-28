@@ -54,7 +54,12 @@ class ConvNeuralNetwork(nn.Module):
             nn.MaxPool2d(kernel_size=2)
         )
         self.flatten = nn.Flatten()
-        self.linear = nn.Linear(128 * 5 * 4, 10)
+        self.linear1 = nn.Linear(128 * 5 * 4, 30)
+        self.reLu1 = nn.ReLU()
+        self.dropout1 = nn.Dropout(0.4)
+        self.linear2 = nn.Linear(30,3)
+        self.reLu2 = nn.ReLU()
+        self.dropout2 = nn.Dropout(0.4)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, input_data):
@@ -63,7 +68,13 @@ class ConvNeuralNetwork(nn.Module):
         x = self.conv3(x)
         x = self.conv4(x)
         x = self.flatten(x)
-        logits = self.linear(x)
-        predictions = self.softmax(logits)
+        x = self.linear1(x)
+        x = self.reLu1(x)
+        x = self.dropout1(x)
+        x = self.linear2(x)
+        x = self.reLu2(x)
+        x = self.dropout2(x)
+        
+        predictions = self.softmax(x)
         
         return predictions
