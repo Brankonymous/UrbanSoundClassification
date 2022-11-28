@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings('ignore')
+
 from utils import utils
 from utils.constants import *
 
@@ -26,8 +29,8 @@ class TrainNeuralNetwork():
         
 
         # Generate DataLoader
-        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS) #shuffle = True / changed to false
-        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS) #shuffle = True / changed to false
+        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE) #shuffle = True / changed to false
+        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE) #shuffle = True / changed to false
 
         if self.config['model_name'] == SupportedModels.LINEAR.name:
             # Model
@@ -36,18 +39,18 @@ class TrainNeuralNetwork():
 
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
             ###### END OF Fully Connected Neural Network #######
                 
         elif self.config['model_name'] == SupportedModels.CNN.name:
             #Model
-            model = ConvNeuralNetwork(shape=train_dataset[0]['input'].shape)
+            model = ConvNeuralNetwork()
             
              # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
             ###### END OF CNN #######
@@ -94,7 +97,7 @@ class TrainNeuralNetwork():
 
             # Compute prediction and loss
             pred = model(X)        
-            loss = loss_fn(pred.float(), y.float())
+            loss = loss_fn(pred, y)
             
             # Backpropagation
             optimizer.zero_grad()
@@ -111,7 +114,6 @@ class TrainNeuralNetwork():
                 print(y)
                 print('--------------------------------------------------')
         scheduler.step()
-
     def valLoop(self, dataloader, model, loss_fn):
         size = len(dataloader.dataset)
         model.eval()
@@ -126,16 +128,20 @@ class TrainNeuralNetwork():
                 pred = model(X)
                 
                 
-                test_loss += loss_fn(pred.float(), y.float()).item()
+                test_loss += loss_fn(pred, y).item()
+
+                
 
                 pred = pred.argmax(1)
                 y = y.argmax(1)
+                print(y.shape, pred.shape)
                 
                 accuracy += (pred == y).type(torch.float).sum().item()
 
                 recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
                 precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
                 F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
+                
         test_loss /= num_batches
 
         accuracy /= size

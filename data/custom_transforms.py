@@ -1,6 +1,7 @@
 import librosa
 import os, sys
 import numpy as np
+import torchaudio
 from speechpy import processing
 from utils.constants import *
 
@@ -66,6 +67,13 @@ class ExtractMFCC(object):
         sample['input'] = mfcc_features
 
         return sample
+
+mel_spectrogram = torchaudio.transforms.MelSpectrogram(
+    sample_rate=SAMPLE_RATE,
+    n_fft=1024,
+    hop_length=512,
+    n_mels=64
+    )
 
 class ToTensor(object):
     # Convert sample features and output into tensor

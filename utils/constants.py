@@ -17,10 +17,10 @@ NUM_CLASSES_8K = 10
 
 # Model constants
 NUM_WORKERS = 0
-BATCH_SIZE = 16
+BATCH_SIZE = 64
 EPOCHS = 40
 LEARNING_RATE = 1e-3
-LR_STEP_SIZE = 10
+LR_STEP_SIZE = 5
 WEIGHT_DECAY = 0
 
 # Fully Connected Network features
@@ -62,7 +62,7 @@ URBAN_SOUND_8K_PATH_META = 'data/dataset/UrbanSound8K/metadata/UrbanSound8K.csv'
 
 
 # We take 2 seconds of each audio file
-NUM_SAMPLES = 44100
+NUM_SAMPLES = 22050
 SAMPLE_RATE = 22050
 ####
 PHILHARM_DATASET_PATH = 'data/dataset/Philharmonia'

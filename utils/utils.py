@@ -1,5 +1,5 @@
 from data.datasets import IrmasDataset
-from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToTensor
+from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToTensor, mel_spectrogram
 from data.datasets import IrmasDataset, UrbanSounds8K
 from torchvision import transforms
 
@@ -132,37 +132,28 @@ def loadDataset(config):
     #To be changed if it works
 
     elif config['model_name'] == SupportedModels.CNN.name:
-            train_dataset = UrbanSounds8K(
+        train_dataset = UrbanSounds8K(
             dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
             dataset_csv_path = URBAN_SOUND_8K_PATH_META,
             num_samples = NUM_SAMPLES,
             sample_rate = SAMPLE_RATE,
-            transform = transforms.Compose([
-                ExtractMFCC(),
-                ToTensor()
-            ])
+            transform = mel_spectrogram
             # generate_csv=True
         )
-            val_dataset = UrbanSounds8K(
+        val_dataset = UrbanSounds8K(
             dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
             dataset_csv_path = URBAN_SOUND_8K_PATH_META,
             num_samples = NUM_SAMPLES,
             sample_rate = SAMPLE_RATE,
-            transform = transforms.Compose([
-                ExtractMFCC(),
-                ToTensor()
-            ])
+            transform = mel_spectrogram
             # generate_csv=True
         )
-            test_dataset = UrbanSounds8K(
+        test_dataset = UrbanSounds8K(
             dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
             dataset_csv_path = URBAN_SOUND_8K_PATH_META,
             num_samples = NUM_SAMPLES,
             sample_rate = SAMPLE_RATE,
-            transform = transforms.Compose([
-                ExtractMFCC(),
-                ToTensor()
-            ])
+            transform = mel_spectrogram
             # generate_csv=True
         )
         #     train_dataset = IrmasDataset(
