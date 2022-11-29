@@ -21,7 +21,7 @@ class TestNeuralNetwork():
         print("Testing model \n")
             
         # Initialize dataset
-        _, _, test_dataset = utils.loadDataset(config=self.config)
+        test_dataset = utils.loadDataset(config=self.config, test=True)
 
         # Generate DataLoader
         test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)

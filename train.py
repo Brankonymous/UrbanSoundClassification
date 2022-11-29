@@ -20,17 +20,15 @@ class TrainNeuralNetwork():
         self.loss = []
         self.accuracy, self.recall, self.precision, self.F1 = [], [], [], []
 
-    def startTrain(self):
+    def startTrain(self, val_fold):
         print("Training model \n")
             
         # Initialize dataset
-        train_dataset, val_dataset, test_dataset = utils.loadDataset(config=self.config)
-
-        
+        train_dataset, val_dataset = utils.loadDataset(config=self.config, val_fold=val_fold)
 
         # Generate DataLoader
-        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle= True, num_workers= NUM_WORKERS) #shuffle = True / changed to false
-        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE) #shuffle = True / changed to false
+        train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS) #shuffle = True / changed to false
+        val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS) #shuffle = True / changed to false
 
         if self.config['model_name'] == SupportedModels.LINEAR.name:
             # Model
@@ -45,15 +43,25 @@ class TrainNeuralNetwork():
             ###### END OF Fully Connected Neural Network #######
                 
         elif self.config['model_name'] == SupportedModels.CNN.name:
-            #Model
+            # Model
             model = ConvNeuralNetwork()
             
-             # Initialize the loss and optimizer function
-            loss_fn = nn.CrossEntropyLoss(label_smoothing=0.11)
+            # Initialize the loss and optimizer function
+            loss_fn = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
             ###### END OF CNN #######
+
+        elif self.config['model_name'] == SupportedModels.VGG.name:
+            model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11_bn', pretrained=True)
+
+            # Initialize the loss and optimizer function
+            loss_fn = nn.CrossEntropyLoss()
+            optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
+
+            ###### END OF VGG #######
 
         # Train and validate neural network
         start_time = datetime.datetime.now()
@@ -76,15 +84,16 @@ class TrainNeuralNetwork():
             flag_show = True if self.config['show_results'] else False
             flag_save = True if self.config['save_results'] else False
 
-            utils.plotImage(x=np.arange(len(self.loss), dtype=np.int64), y=self.loss, title='Loss (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Cross entropy loss', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.accuracy), dtype=np.int64), y=self.accuracy, title='Accuracy (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.precision), dtype=np.int64), y=self.precision, title='Precision (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.recall), dtype=np.int64), y=self.recall, title='Recall (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.F1), dtype=np.int64), y=self.F1, title='F1 Score (' + self.config['model_name'] + ' model)', x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            title_info = '(' + self.config['model_name'] + ' model)' + ' Val. fold: ' + str(val_fold)
+            utils.plotImage(x=np.arange(len(self.loss), dtype=np.int64), y=self.loss, title='Loss ' + title_info, x_label = 'Epochs', y_label='Cross entropy loss', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.accuracy), dtype=np.int64), y=self.accuracy, title='Accuracy ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.precision), dtype=np.int64), y=self.precision, title='Precision ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.recall), dtype=np.int64), y=self.recall, title='Recall ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            utils.plotImage(x=np.arange(len(self.F1), dtype=np.int64), y=self.F1, title='F1 Score ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
 
         # Save model if flag is true
         if self.config['save_model'] or self.config['type'] == ModelType.TRAIN_AND_TEST.name:
-            torch.save(model, SAVED_MODEL_PATH + self.config['model_name'] + '.pt')
+            torch.save(model, SAVED_MODEL_PATH + DATASET + '/' + self.config['model_name'] + '_fold' + str(val_fold) + '.pt')
 
     def trainLoop(self, dataloader, model, loss_fn, optimizer, scheduler):
         # Traverse trough batches
@@ -93,14 +102,12 @@ class TrainNeuralNetwork():
         accuracy = 0
 
         for batch_idx, sample in enumerate(dataloader):
-
             X, y = sample['input'], sample['label']
             
-
             # Compute prediction and loss
-            pred = model(X)        
+            pred = model(X)
             loss = loss_fn(pred, y)
-            
+
             # Backpropagation
             optimizer.zero_grad()
             loss.backward()
@@ -110,11 +117,10 @@ class TrainNeuralNetwork():
             accuracy += (pred == y).sum().item()
 
             # Output results
-            if batch_idx % 10 == 0:
+            if batch_idx % 125 == 0:
                 loss, current = loss.item(), min(size, batch_idx * BATCH_SIZE)
-                print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}, train_accuracy: {(accuracy/((1+batch_idx) *BATCH_SIZE)) * 100}%')
-               # print('--------------------------------------------------')
-               # print(pred)
+                print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}')
+                # print(pred)
                 print('--------------------------------------------------')
                 
         scheduler.step()
@@ -124,48 +130,42 @@ class TrainNeuralNetwork():
         model.eval()
         
         num_batches = len(dataloader)
-        test_loss, accuracy, precision, recall, F1 = 0, 0, 0, 0, 0
+        y_pred, y_true = [], []
+        val_loss, accuracy, precision, recall, F1 = 0, 0, 0, 0, 0
 
         with torch.no_grad():
             for batch_idx, sample in enumerate(dataloader):
-
-                
                 X, y = sample['input'], sample['label']
-
                 pred = model(X)
                 
-                
-                test_loss += loss_fn(pred, y).item()
-
-                
-
+                val_loss += loss_fn(pred, y).item()
                 pred = pred.argmax(1)
-               # y = y.argmax(1)
-               # print(y.shape, pred.shape)
                 
                 accuracy += (pred == y).sum().item()
 
-                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
-                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
-                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='weighted', labels=np.unique(pred))
-                
-        test_loss /= num_batches
-
+                y_pred.append(pred.numpy())
+                y_true.append(y.numpy())
+        
+        val_loss /= num_batches
         accuracy /= size
-        recall /= size
-        precision /= size
-        F1 /= size
+
+        y_pred = np.concatenate(np.array(y_pred))
+        y_true = np.concatenate(np.array(y_true))
+        
+        recall = recall_score(y_true = y_true, y_pred=y_pred, average='weighted', labels=np.unique(y_pred))
+        precision = precision_score(y_true = y_true, y_pred=y_pred, average='weighted', labels=np.unique(y_pred))
+        F1 = f1_score(y_true = y_true, y_pred=y_pred, average='weighted', labels=np.unique(y_pred))
 
         accuracy *= 100
         recall *= 100
         precision *= 100
         F1 *= 100
 
-        print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg Loss: {test_loss:>8f} \n')
-        # print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
+        print(f'Validation Error: \n Accuracy: {(accuracy):>0.1f}%, Avg Loss: {val_loss:>8f} \n')
+        print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
 
         # Append results
-        self.loss.append(test_loss)
+        self.loss.append(val_loss)
         self.accuracy.append(accuracy)
         self.recall.append(recall)
         self.precision.append(precision)

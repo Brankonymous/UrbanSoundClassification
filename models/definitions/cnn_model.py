@@ -11,7 +11,7 @@ class ConvNeuralNetwork(nn.Module):
         
         self.conv1 = nn.Sequential(
             nn.Conv2d(
-                in_channels=1,
+                in_channels=3,
                 out_channels=16,
                 kernel_size=3,
                 stride=1,
@@ -53,13 +53,18 @@ class ConvNeuralNetwork(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2)
         )
+
         self.flatten = nn.Flatten()
-        self.linear1 = nn.Linear(128 * 5 * 4, 25)
-        self.reLu1 = nn.ReLU()
-        self.dropout1 = nn.Dropout(0.5)
-        self.linear2 = nn.Linear(25,3)
-        self.reLu2 = nn.ReLU()
-        self.dropout2 = nn.Dropout(0.4)
+        self.adaptivePool = nn.AdaptiveAvgPool2d((7, 7))
+
+        self.linearStack = nn.Sequential(
+            nn.Linear(128 * 7 * 7, 25),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+
+            nn.Linear(25, NUM_CLASSES)
+        )
+
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, input_data):
@@ -67,13 +72,10 @@ class ConvNeuralNetwork(nn.Module):
         x = self.conv2(x)
         x = self.conv3(x)
         x = self.conv4(x)
+
+        x = self.adaptivePool(x)
         x = self.flatten(x)
-        x = self.linear1(x)
-        x = self.reLu1(x)
-        x = self.dropout1(x)
-        x = self.linear2(x)
-        x = self.reLu2(x)
-        x = self.dropout2(x)
+        x = self.linearStack(x)
         
         predictions = self.softmax(x)
         

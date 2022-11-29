@@ -1,5 +1,5 @@
 from data.datasets import IrmasDataset
-from data.custom_transforms import ExtractLinearFeatures, ToTensor, mel_spectrogram
+from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToThreeChannels, ToTensor
 from data.datasets import IrmasDataset, UrbanSounds8K
 from torchvision import transforms
 
@@ -102,86 +102,66 @@ def parseDataset(csv_path, dataset_path):
     writeToCSV(csv_path=csv_path+'irmas_val.csv', header=header, data=np.append(X_val, y_val, axis=1))
     writeToCSV(csv_path=csv_path+'irmas_test.csv', header=header, data=np.append(X_test, y_test, axis=1))
 
-def loadDataset(config):
+def loadDataset(config, val_fold=1, test=False):
+    linear_transform = transforms.Compose([
+        ExtractLinearFeatures(),
+        ToTensor()
+    ])
+    cnn_transform = transforms.Compose([
+        ExtractMFCC(),
+        ToThreeChannels(),
+    ])
     if config['model_name'] == SupportedModels.LINEAR.name:
-        train_dataset = IrmasDataset(
-            dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
-            transform = transforms.Compose([
-                ExtractLinearFeatures(),
-                ToTensor()
-            ]),
-            generate_csv=True
-        )
-        val_dataset = IrmasDataset(
-            dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
-            transform = transforms.Compose([
-                ExtractLinearFeatures(),
-                ToTensor()
-            ]),
-            generate_csv=True
-        )
-        test_dataset = IrmasDataset(
-            dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
-            transform = transforms.Compose([
-                ExtractLinearFeatures(),
-                ToTensor()
-            ]),
-            generate_csv=True
-        )
-        
-    #To be changed if it works
-
+        custom_transform = linear_transform
     elif config['model_name'] == SupportedModels.CNN.name:
-        train_dataset = UrbanSounds8K(
-            dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
-            dataset_csv_path = URBAN_SOUND_8K_PATH_META_bigger,
-            num_samples = NUM_SAMPLES,
-            sample_rate = SAMPLE_RATE,
-            transform = mel_spectrogram
-            # generate_csv=True
-        )
-        val_dataset = UrbanSounds8K(
-            dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
-            dataset_csv_path = URBAN_SOUND_8K_PATH_META_bigger,
-            num_samples = NUM_SAMPLES,
-            sample_rate = SAMPLE_RATE,
-            transform = mel_spectrogram
-            # generate_csv=True
-        )
-        test_dataset = UrbanSounds8K(
-            dataset_items_path = URBAN_SOUND_8K_PATH_AUDIO,
-            dataset_csv_path = URBAN_SOUND_8K_PATH_META_bigger,
-            num_samples = NUM_SAMPLES,
-            sample_rate = SAMPLE_RATE,
-            transform = mel_spectrogram
-            # generate_csv=True
-        )
-        #     train_dataset = IrmasDataset(
-        #     dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
-        #     transform = transforms.Compose([
-        #         ExtractMFCC(),
-        #         ToTensor()
-        #     ]),
-        #     generate_csv=True
-        # )
-        #     val_dataset = IrmasDataset(
-        #     dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
-        #     transform = transforms.Compose([
-        #         ExtractMFCC(),
-        #         ToTensor()
-        #     ]),
-        #     generate_csv=True
-        # )
-        #     test_dataset = IrmasDataset(
-        #     dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
-        #     transform = transforms.Compose([
-        #         ExtractMFCC(),
-        #         ToTensor()
-        #     ]),
-        #     generate_csv=True
-        # )
+        custom_transform = cnn_transform
+    elif config['model_name'] == SupportedModels.VGG.name:
+        custom_transform = cnn_transform
 
-    return train_dataset, val_dataset, test_dataset
+    if DATASET == 'URBAN_SOUNDS_8K':
+        if not test:
+            train_dataset = UrbanSounds8K(
+                dataset_path = URBAN_SOUND_8K_DATASET_PATH,
+                transform = custom_transform,
+                train=True,
+                val_fold=val_fold
+            )
+            val_dataset = UrbanSounds8K(
+                dataset_path = URBAN_SOUND_8K_DATASET_PATH,
+                transform = custom_transform,
+                train=False,
+                val_fold=val_fold
+            )
+        else:
+            test_dataset = UrbanSounds8K(
+                dataset_path = URBAN_SOUND_8K_DATASET_PATH,
+                transform = custom_transform,
+                train=True,
+                val_fold=-1
+            )
+    elif DATASET == 'IRMAS':
+        if not test:
+            train_dataset = IrmasDataset(
+                dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
+                transform = custom_transform,
+                generate_csv=True
+            )
+            val_dataset = IrmasDataset(
+                dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
+                transform = custom_transform,
+                generate_csv=True
+            )
+        else:
+            test_dataset = IrmasDataset(
+                dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
+                transform = custom_transform,
+                generate_csv=True
+            )
+    
+    if not test:
+        return train_dataset, val_dataset
+    else:
+        return test_dataset
 
 def plotImage(x, y, title='', x_label='', y_label='', flag_show=True, flag_save=True):
     # Disables showing plot if show==False
@@ -197,7 +177,7 @@ def plotImage(x, y, title='', x_label='', y_label='', flag_show=True, flag_save=
 
     # Show/Save plot
     if flag_save:
-        plt.savefig(SAVED_RESULTS_PATH + title + '.png')
+        plt.savefig(SAVED_RESULTS_PATH + DATASET + '/' + title + '.png')
     if flag_show:
         plt.show()
 
