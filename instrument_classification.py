@@ -37,6 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--show_results', help='Plot loss and accuracy info during training', default=False)
     parser.add_argument('--save_results', help='Save loss and accuracy info during training', default=True)
     parser.add_argument('--save_model', help='Save model during training', default=True)
+    parser.add_argument('--test_path', help='Custom test path')
 
     # Wrapping configuration into a dictionary
     args = parser.parse_args()
@@ -49,7 +50,8 @@ if __name__ == '__main__':
     if config['type'] == 'TEST' or config['type'] == 'TRAIN_AND_TEST':
         test(config)
     if config['type'] == 'CUSTOM_TEST':
-        custom_test(config)
+        custom_test = CustomTest(config)
+        custom_test.custom_test()
     
 
     
