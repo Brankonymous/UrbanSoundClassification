@@ -9,9 +9,10 @@ from pandas import DataFrame
 
 import re
 import matplotlib.pyplot as plt
-from pretty_confusion_matrix import pp_matrix
+# from pretty_confusion_matrix import pp_matrix
 
 import seaborn as sn
+
 
 from sklearn.model_selection import train_test_split
 
@@ -110,6 +111,7 @@ def loadDataset(config, val_fold=1, test=False):
     cnn_transform = transforms.Compose([
         ExtractMFCC(),
         ToThreeChannels(),
+        ToTensor()
     ])
     if config['model_name'] == SupportedModels.LINEAR.name:
         custom_transform = linear_transform
@@ -139,24 +141,6 @@ def loadDataset(config, val_fold=1, test=False):
                 train=True,
                 val_fold=-1
             )
-    elif DATASET == 'IRMAS':
-        if not test:
-            train_dataset = IrmasDataset(
-                dataset_path=DATASET_DIRECTORY + 'irmas_train.csv',
-                transform = custom_transform,
-                generate_csv=True
-            )
-            val_dataset = IrmasDataset(
-                dataset_path=DATASET_DIRECTORY + 'irmas_val.csv',
-                transform = custom_transform,
-                generate_csv=True
-            )
-        else:
-            test_dataset = IrmasDataset(
-                dataset_path=DATASET_DIRECTORY + 'irmas_test.csv',
-                transform = custom_transform,
-                generate_csv=True
-            )
     
     if not test:
         return train_dataset, val_dataset
@@ -168,6 +152,7 @@ def plotImage(x, y, title='', x_label='', y_label='', flag_show=True, flag_save=
     plt.ioff()
 
     # Add title and axis names
+    plt.figure(figsize=(15,10), facecolor='white')
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
@@ -177,16 +162,32 @@ def plotImage(x, y, title='', x_label='', y_label='', flag_show=True, flag_save=
 
     # Show/Save plot
     if flag_save:
+        print("Saved at:")
+        print(SAVED_RESULTS_PATH + DATASET + '/' + title + '.png')
         plt.savefig(SAVED_RESULTS_PATH + DATASET + '/' + title + '.png')
     if flag_show:
         plt.show()
 
     plt.close()
 
-def plotConfusionMatrix(confusion_matrix, title='Confusion Matrix'):
+def plotConfusionMatrix(confusion_matrix, val_fold, flag_show=True, title='Confusion Matrix'):
     df_cm = DataFrame(confusion_matrix, index=LABEL_NAME[:NUM_CLASSES], columns=LABEL_NAME[:NUM_CLASSES])
 
-    pp_matrix(df_cm, cmap='Oranges', annot=True)
+    # Disables showing plot if show==False
+    plt.ioff()
+    
+    plt.figure(figsize=(15,15), facecolor='white')
+    sn.heatmap(df_cm, annot=True)
+    plt.yticks(rotation=45)
+    plt.xticks(rotation=45)
+    
+    print("Saved at:")
+    print(SAVED_RESULTS_PATH + DATASET + '/conf_matrix_' + str(val_fold) + '.png')
+    plt.savefig(SAVED_RESULTS_PATH + DATASET + '/conf_matrix_' + str(val_fold) + '.png')
+
+    if flag_show:
+      plt.show()
+    
     plt.close()
 
 #Same as keras

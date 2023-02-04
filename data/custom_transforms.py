@@ -91,7 +91,7 @@ class ToThreeChannels(object):
 class ToTensor(object):
     # Convert sample features and output into tensor
     def __call__(self, sample):
-        sample['input'] = torch.from_numpy(np.array(sample['input']))
-        sample['label'] = torch.from_numpy(np.array(sample['label']))
+        sample['input'] = torch.from_numpy(np.array(sample['input'])).to(DEVICE)
+        sample['label'] = torch.from_numpy(np.array(sample['label'])).to(DEVICE)
 
         return sample

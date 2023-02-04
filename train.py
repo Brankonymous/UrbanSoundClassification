@@ -5,7 +5,7 @@ from utils import utils
 from utils.constants import *
 
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, default_collate
 
 import numpy as np
 import datetime
@@ -21,6 +21,7 @@ class TrainNeuralNetwork():
         self.accuracy, self.recall, self.precision, self.F1 = [], [], [], []
 
     def startTrain(self, val_fold):
+        # torch.multiprocessing.set_start_method('spawn')
         print("Training model \n")
             
         # Initialize dataset
@@ -55,15 +56,15 @@ class TrainNeuralNetwork():
 
         elif self.config['model_name'] == SupportedModels.VGG.name:
             model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11_bn', pretrained=True)
-
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
 
             ###### END OF VGG #######
 
         # Train and validate neural network
+        model.to(DEVICE)
         start_time = datetime.datetime.now()
         for t in range(EPOCHS):
             # Print info
@@ -100,10 +101,10 @@ class TrainNeuralNetwork():
         size = len(dataloader.dataset)
         model.train()
         accuracy = 0
+        print(next(model.parameters()).device)
 
         for batch_idx, sample in enumerate(dataloader):
             X, y = sample['input'], sample['label']
-            
             # Compute prediction and loss
             pred = model(X)
             loss = loss_fn(pred, y)
@@ -117,12 +118,14 @@ class TrainNeuralNetwork():
             accuracy += (pred == y).sum().item()
 
             # Output results
-            if batch_idx % 125 == 0:
+            if batch_idx % 10 == 0:
                 loss, current = loss.item(), min(size, batch_idx * BATCH_SIZE)
                 print(f'loss: {loss:>7f}  [{current}/{size}], lr: {scheduler.get_last_lr()}')
                 # print(pred)
                 print('--------------------------------------------------')
-                
+        accuracy *= 100/size
+        print(f'Train accuracy: {accuracy:>7f}')
+
         scheduler.step()
 
     def valLoop(self, dataloader, model, loss_fn):
@@ -136,6 +139,7 @@ class TrainNeuralNetwork():
         with torch.no_grad():
             for batch_idx, sample in enumerate(dataloader):
                 X, y = sample['input'], sample['label']
+
                 pred = model(X)
                 
                 val_loss += loss_fn(pred, y).item()
@@ -143,8 +147,8 @@ class TrainNeuralNetwork():
                 
                 accuracy += (pred == y).sum().item()
 
-                y_pred.append(pred.numpy())
-                y_true.append(y.numpy())
+                y_pred.append(pred.cpu().numpy())
+                y_true.append(y.cpu().numpy())
         
         val_loss /= num_batches
         accuracy /= size

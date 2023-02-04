@@ -100,6 +100,10 @@ class UrbanSounds8K(Dataset):
         if self.transform:
             sample = self.transform(sample)
 
+        del sample['audio']
+        del sample['sample_rate']
+        del sample['class_name']
+
         #print(sample['label'].shape)
         return sample
 
