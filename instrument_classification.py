@@ -8,12 +8,13 @@ import torch
 
 from train import TrainNeuralNetwork
 from test import TestNeuralNetwork
+from custom_test import CustomTest
 
 import utils.utils as utils
 from utils.constants import *
 
 def train(config):
-    for val_fold in range(1, K_FOLD+1):
+    for val_fold in range(5, K_FOLD+1):
         print(f'--------- Validation fold {val_fold} ---------')
         
         trainNeuralNet = TrainNeuralNetwork(config=config)
@@ -25,20 +26,22 @@ def test(config):
       testNeuralNet.startTest(val_fold, flag_show=config['show_results'])
 
 def custom_test(config):
-    pass
+    customTest = CustomTest(config)
+
+    customTest.custom_test()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Common params
     # Izbrisali smo argparse.BooleanOptionalAction
-    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.TRAIN_AND_TEST.name)
+    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.CUSTOM_TEST.name)
     parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.VGG.name) #default=SupportedModels.LINEAR.name
     parser.add_argument('--show_results', help='Plot loss and accuracy info during training', default=False)
     parser.add_argument('--save_results', help='Save loss and accuracy info during training', default=True)
     parser.add_argument('--save_model', help='Save model during training', default=True)
-    parser.add_argument('--test_path', help='Custom test path')
-
+    parser.add_argument('--custom_test_path', help= 'Path for custom audio to classify', default='')
+    
     # Wrapping configuration into a dictionary
     args = parser.parse_args()
     config = dict()
@@ -50,8 +53,7 @@ if __name__ == '__main__':
     if config['type'] == 'TEST' or config['type'] == 'TRAIN_AND_TEST':
         test(config)
     if config['type'] == 'CUSTOM_TEST':
-        custom_test = CustomTest(config)
-        custom_test.custom_test()
+        custom_test(config)
     
 
     

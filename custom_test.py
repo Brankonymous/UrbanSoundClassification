@@ -3,9 +3,12 @@ warnings.filterwarnings('ignore')
 
 from utils import utils
 from utils.constants import *
+from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToThreeChannels, ToTensor
 
 from torch import nn
 from torch.utils.data import DataLoader, default_collate
+import torchaudio
+from torchvision import transforms
 
 import numpy as np
 import datetime
@@ -17,7 +20,7 @@ from models.definitions.linear_model import LinearNeuralNetwork
 
 class CustomTest():
     def __init__(self,config):
-        self.path = config['test_path']
+        self.path = config['custom_test_path']
         self.name = config['model_name']
         self.audio_sample, self.sample_rate = torchaudio.load(self.path)
         self.audio_sample = self.resample(self.audio_sample, self.sample_rate, SAMPLE_RATE)
@@ -31,14 +34,16 @@ class CustomTest():
             'label': []      # Mozda pravi problem
         }
         cnn_transform = transforms.Compose([
-        ExtractMFCC(),
-        ToThreeChannels(),
-        ToTensor()
+            ExtractMFCC(),
+            ToThreeChannels(),
+            ToTensor()
         ])
-        X = cnn_transform(sample)
-        self.audio_sample = X['input']
 
-        
+        X = cnn_transform(sample)
+        self.audio_sample = np.array(X['input'])
+        self.audio_sample = torch.from_numpy(np.expand_dims(self.audio_sample, axis=0))
+        # self.audio_sample = np.array([np.newaxis, ...])
+        print(self.audio_sample.shape)
 
     def resample(self, audio_sample, sample_rate, target_sample_rate):
         if sample_rate != target_sample_rate:
@@ -91,12 +96,16 @@ class CustomTest():
             return 'street_music'
 
     def custom_test(self):
-        answer = np.zeros(10)
-        for i in range(1,4):
+        answer = np.zeros(NUM_CLASSES)
+        for i in range(1, K_FOLD+1):
             model_path = SAVED_MODEL_PATH + DATASET + '/' + self.name + "_fold" + str(i) + '.pt'
-            model = torch.load(model_path)
+            # print(model_path)
+            model = torch.load(model_path, map_location=torch.device(DEVICE))
+
             pred = model(self.audio_sample)
-            answer += pred[0]
+            pred = pred[0][:10].detach()
+
+            answer = np.add(answer, np.array(pred))
         print('Model predicted: ', self.get_name(answer.argmax()))
 
         
