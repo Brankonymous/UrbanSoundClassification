@@ -17,20 +17,20 @@ class TestNeuralNetwork():
         self.y_true = []
         self.y_pred = []
         self.test_loss = 1/K_FOLD
-        self.accuracy = 1/K_FOLD
+        self.accuracy = 0
 
     def startTest(self, val_fold, flag_show=True):
         print("Testing model " + str(val_fold))
             
         # Initialize dataset
-        test_dataset = utils.loadDataset(config=self.config, test=True)
+        _, test_dataset = utils.loadDataset(config=self.config, val_fold=val_fold)
 
         # Generate DataLoader
         test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
 
         # Model
         model_path = SAVED_MODEL_PATH + DATASET + '/' + self.config['model_name'] + "_fold" + str(val_fold) + '.pt'
-        model = torch.load(model_path)
+        model = torch.load(model_path, map_location=torch.device(DEVICE))
 
         # Initialize the loss function
         loss_fn = nn.CrossEntropyLoss()
@@ -39,7 +39,7 @@ class TestNeuralNetwork():
         utils.plotConfusionMatrix(self.conf_mat, val_fold, flag_show)
 
         self.test_loss *= test_loss
-        self.accuracy *= accuracy
+        self.accuracy += accuracy
 
 
     def testLoop(self, dataloader, model, loss_fn):
@@ -49,6 +49,7 @@ class TestNeuralNetwork():
         num_batches = len(dataloader)
         test_loss, accuracy, precision, recall, F1 = 0, 0, 0, 0, 0
 
+        y_pred, y_true = [], []
         with torch.no_grad():
             for batch_idx, sample in enumerate(dataloader):
                 X, y = sample['input'], sample['label']
@@ -61,9 +62,9 @@ class TestNeuralNetwork():
                 pred = pred.argmax(1)
                 pred, y = pred.cpu(), y.cpu()
                 accuracy += (pred == y).type(torch.float).sum().item()
-                recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
-                precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
-                F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
+                # recall += recall_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
+                # precision += precision_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
+                # F1 += f1_score(y_true = y.numpy(), y_pred=pred.numpy(), average='micro', labels=np.unique(pred))
 
                 # Debug output
                 if batch_idx % 10 == 0:
@@ -73,16 +74,32 @@ class TestNeuralNetwork():
                 [self.y_pred.append(val) for val in pred.numpy()]
                 [self.y_true.append(val) for val in y.numpy()]
 
+                y_pred.append(pred.cpu().numpy())
+                y_true.append(y.cpu().numpy())
+
         
         self.conf_mat = confusion_matrix(self.y_true, self.y_pred, labels=np.arange(NUM_CLASSES))
         
         test_loss /= num_batches
         accuracy /= size
 
-        accuracy *= 100
+        
 
+        y_pred = np.concatenate(np.array(y_pred))
+        y_true = np.concatenate(np.array(y_true))
+        recall = recall_score(y_true = y_true, y_pred=y_pred, average='weighted', labels=np.unique(y_pred))
+        precision = precision_score(y_true = y_true, y_pred=y_pred, average='weighted', labels=np.unique(y_pred))
+        F1 = f1_score(y_true = y_true, y_pred=y_pred, average='weighted', labels=np.unique(y_pred))
+        
+        accuracy *= 100
+        recall *= 100
+        precision *= 100
+        F1 *= 100
 
         print(f'Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg Loss: {test_loss:>8f} \n')
         print(f' Recall: {(recall):>0.1f}%, Precision: {(precision):>0.1f}%, F1 Score: {(F1):>0.1f}% \n')
 
         return test_loss, accuracy
+
+    def printAccuracy(self):
+        print(f'Accuracy of model: {(self.accuracy/K_FOLD):>0.2f}%')
