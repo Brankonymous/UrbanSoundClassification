@@ -8,7 +8,7 @@ import torch
 
 from train import TrainNeuralNetwork
 from test import TestNeuralNetwork
-from custom_test import CustomTest
+from test_custom import CustomTest
 
 import utils.utils as utils
 from utils.constants import *
@@ -28,17 +28,19 @@ def test(config):
     testNeuralNet.printAccuracy()
 
 def custom_test(config):
+    # For test purposes - data\custom_audio\dog_barking.mp3
+
     customTest = CustomTest(config)
 
-    customTest.custom_test()
+    customTest.startTest()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Common params
     # Izbrisali smo argparse.BooleanOptionalAction
-    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.TEST.name)
-    parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.VGG.name) #default=SupportedModels.LINEAR.name
+    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.CUSTOM_TEST.name)
+    parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.LINEAR.name) #default=SupportedModels.LINEAR.name
     parser.add_argument('--show_results', help='Plot loss and accuracy info during training', default=False)
     parser.add_argument('--save_results', help='Save loss and accuracy info during training', default=True)
     parser.add_argument('--save_model', help='Save model during training', default=True)

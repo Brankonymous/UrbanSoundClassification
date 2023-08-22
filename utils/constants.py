@@ -36,7 +36,7 @@ NUM_MFCC_FEATURES = 52 # Changed from 50 to 52
 
 # We take 2 seconds of each audio file
 SAMPLE_RATE = 44100
-NUM_SAMPLES = 2 * SAMPLE_RATE # 1s
+SAMPLE_SIZE = 2 * SAMPLE_RATE # 2s
 
 # UrbanSound8K DATASET
 NUM_CLASSES_8K = 10

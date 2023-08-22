@@ -129,15 +129,15 @@ class UrbanSounds8K(Dataset):
         return audio_sample
     
     def cutDown(self, audio_sample):
-        if audio_sample.shape[1] > NUM_SAMPLES:
-            audio_sample = audio_sample[: ,:NUM_SAMPLES]
+        if audio_sample.shape[1] > SAMPLE_SIZE:
+            audio_sample = audio_sample[: ,:SAMPLE_SIZE]
         return audio_sample
 
     def padRight(self, audio_sample):
         length = audio_sample.shape[1]
 
-        if length < NUM_SAMPLES:
-            to_pad = NUM_SAMPLES - length
+        if length < SAMPLE_SIZE:
+            to_pad = SAMPLE_SIZE - length
             last_dim_padding = (0, to_pad)
             audio_sample = nn.functional.pad(audio_sample, last_dim_padding)
 

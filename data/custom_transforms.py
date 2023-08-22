@@ -18,7 +18,6 @@ class ExtractLinearFeatures(object):
         audio_sample = sample['audio'].numpy()
         sample_rate = sample['sample_rate']
         sample['input'] = []
-        print(audio_sample.shape)
 
         if FLAG_RMS:
             rms = np.mean(librosa.feature.rms(y=audio_sample))
@@ -42,9 +41,9 @@ class ExtractLinearFeatures(object):
             # Normalize
             # mfcc_features = processing.cmvn(mfcc_features)
             if len(mfcc_features.shape) > 2:
-                mfcc_features = np.mean(mfcc_features, axis=1)
-
+                mfcc_features = np.mean(mfcc_features, axis=2).ravel()
             [sample['input'].append(feature) for feature in mfcc_features]
+
 
         sample['input'] = np.array(sample['input']).ravel()
         return sample
