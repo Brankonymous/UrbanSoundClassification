@@ -162,9 +162,13 @@ def plotImage(x, y, title='', x_label='', y_label='', flag_show=True, flag_save=
 
     # Show/Save plot
     if flag_save:
+        results_dir = SAVED_RESULTS_PATH + DATASET
+        if not os.path.isdir(results_dir):
+            os.makedirs(results_dir)
+        
         print("Saved at:")
-        print(SAVED_RESULTS_PATH + DATASET + '/' + title + '.png')
-        plt.savefig(SAVED_RESULTS_PATH + DATASET + '/' + title + '.png')
+        print(results_dir + '/' + title + '.png')
+        plt.savefig(results_dir + '/' + title + '.png')
     if flag_show:
         plt.show()
 
@@ -183,7 +187,11 @@ def plotConfusionMatrix(confusion_matrix, val_fold, flag_show=True, title='Confu
     
     print("Saved at:")
     print(SAVED_RESULTS_PATH + DATASET + '/conf_matrix_' + str(val_fold) + '.png')
-    plt.savefig(SAVED_RESULTS_PATH + DATASET + '/conf_matrix_' + str(val_fold) + '.png')
+
+    results_dir = SAVED_RESULTS_PATH + DATASET
+    if not os.path.isdir(results_dir):
+        os.makedirs(results_dir)
+    plt.savefig(results_dir + '/conf_matrix_' + str(val_fold) + '.png')
 
     if flag_show:
       plt.show()

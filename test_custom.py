@@ -63,7 +63,7 @@ class CustomTest():
         # Save model input
         self.sample_input = [torch.unsqueeze(transformed_sample['input'], dim=0) for transformed_sample in transformed_samples]
 
-    def startTest(self, flag_show=True):
+    def startTest(self):
         print("Testing model")
 
         predicted_classes = []
