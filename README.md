@@ -1,13 +1,12 @@
-# InstrumentClassification
-
-Urban Sound Classification
+# Urban Sound Classification
 
 # Project idea
-Audio classification with PyTorch. Comparing custom made FFNN and CNN models to a pre-trained VGG11 with batch normalization.
+Audio classification using PyTorch. <br /> 
+Comparing custom made FFNN and CNN models to a pre-trained VGG-11 with Batch Normalization.
 
 # Setup
 Run <b> main.py </b> <br />
-<b>NOTE</b> You should install <b>PyTorch<b> and <b>TorchAudio<b>
+<b>NOTE: </b> You should install <b>PyTorch<b> and <b>TorchAudio<b>
 
 ## Command Line Parameters
 <b> --type       </b>   (Input TRAIN, TEST or CUSTOM_TEST for type of classification) <br />
@@ -23,7 +22,7 @@ Info can also be found using <b>--help</b> parameter
 # Network models
 FFNN network with 3 hidden layers (definition can be found at `models\definitions\ffnn_model.py`) <br />
 CNN network with VGG-like architecture (definition can be found at `models\definitions\cnn_model.py`)<br />
-Pre-trained VGG11 with Batch Normalization <br />
+Pre-trained VGG-11 with Batch Normalization <br />
 
 # Dataset
 <b> URBANSOUNDS8K </b> https://urbansounddataset.weebly.com/urbansound8k.html (browser download) <br />
