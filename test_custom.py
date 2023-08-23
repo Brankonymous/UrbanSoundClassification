@@ -3,7 +3,7 @@ warnings.filterwarnings('ignore')
 
 from utils import utils
 from utils.constants import *
-from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToThreeChannels, ToTensor
+from data.custom_transforms import ExtractFFNNFeatures, ExtractMFCC, ToThreeChannels, ToTensor
 
 from torch import nn
 from torch.utils.data import DataLoader, default_collate
@@ -15,7 +15,7 @@ import datetime
 from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 
 from models.definitions.cnn_model import ConvNeuralNetwork
-from models.definitions.linear_model import LinearNeuralNetwork
+from models.definitions.ffnn_model import FFNNNeuralNetwork
 
 
 class CustomTest():
@@ -44,12 +44,12 @@ class CustomTest():
         } for audio_sample in self.audio_samples]
 
         sample_transform = None
-        if self.config['model_name'] == SupportedModels.LINEAR.name:
-            linear_transform = transforms.Compose([
-                ExtractLinearFeatures(),
+        if self.config['model_name'] == SupportedModels.FFNN.name:
+            ffnn_transform = transforms.Compose([
+                ExtractFFNNFeatures(),
                 ToTensor()
             ])
-            sample_transform = linear_transform
+            sample_transform = ffnn_transform
         elif self.config['model_name'] == SupportedModels.CNN.name or self.config['model_name'] == SupportedModels.VGG.name:
             cnn_transform = transforms.Compose([
                 ExtractMFCC(),

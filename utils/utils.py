@@ -1,5 +1,5 @@
 from data.datasets import IrmasDataset
-from data.custom_transforms import ExtractLinearFeatures, ExtractMFCC, ToThreeChannels, ToTensor
+from data.custom_transforms import ExtractFFNNFeatures, ExtractMFCC, ToThreeChannels, ToTensor
 from data.datasets import IrmasDataset, UrbanSounds8K
 from torchvision import transforms
 
@@ -104,8 +104,8 @@ def parseDataset(csv_path, dataset_path):
     writeToCSV(csv_path=csv_path+'irmas_test.csv', header=header, data=np.append(X_test, y_test, axis=1))
 
 def loadDataset(config, val_fold=1, test=False):
-    linear_transform = transforms.Compose([
-        ExtractLinearFeatures(),
+    ffnn_transform = transforms.Compose([
+        ExtractFFNNFeatures(),
         ToTensor()
     ])
     cnn_transform = transforms.Compose([
@@ -113,8 +113,8 @@ def loadDataset(config, val_fold=1, test=False):
         ToThreeChannels(),
         ToTensor()
     ])
-    if config['model_name'] == SupportedModels.LINEAR.name:
-        custom_transform = linear_transform
+    if config['model_name'] == SupportedModels.FFNN.name:
+        custom_transform = ffnn_transform
     elif config['model_name'] == SupportedModels.CNN.name:
         custom_transform = cnn_transform
     elif config['model_name'] == SupportedModels.VGG.name:

@@ -12,7 +12,7 @@ import datetime
 from sklearn.metrics import f1_score, precision_score, recall_score
 
 from models.definitions.cnn_model import ConvNeuralNetwork
-from models.definitions.linear_model import LinearNeuralNetwork
+from models.definitions.ffnn_model import FFNNNeuralNetwork
 
 class TrainNeuralNetwork():
     def __init__(self, config):
@@ -31,10 +31,10 @@ class TrainNeuralNetwork():
         train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS) #shuffle = True / changed to false
         val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS) #shuffle = True / changed to false
 
-        if self.config['model_name'] == SupportedModels.LINEAR.name:
+        if self.config['model_name'] == SupportedModels.FFNN.name:
             # Model
             input_size = NUM_MFCC_FEATURES + FLAG_RMS + FLAG_ROLLOF + FLAG_SPEC_CENT + FLAG_SPEC_BW + FLAG_ZERO_CR
-            model = LinearNeuralNetwork(input_size=input_size)
+            model = FFNNNeuralNetwork(input_size=input_size)
 
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()

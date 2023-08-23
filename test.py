@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score
 
 from models.definitions.cnn_model import ConvNeuralNetwork
-from models.definitions.linear_model import LinearNeuralNetwork
+from models.definitions.ffnn_model import FFNNNeuralNetwork
 from sklearn.metrics import confusion_matrix
 
 class TestNeuralNetwork():
@@ -17,7 +17,7 @@ class TestNeuralNetwork():
         self.y_true = []
         self.y_pred = []
         self.test_loss = 1/K_FOLD
-        self.accuracy = 0
+        self.accuracy = []
 
     def startTest(self, val_fold, flag_show=True):
         print("Testing model " + str(val_fold))
@@ -30,6 +30,7 @@ class TestNeuralNetwork():
 
         # Model
         model_path = SAVED_MODEL_PATH + DATASET + '/' + self.config['model_name'] + "_fold" + str(val_fold) + '.pt'
+        print(model_path)
         model = torch.load(model_path, map_location=torch.device(DEVICE))
 
         # Initialize the loss function
@@ -39,7 +40,7 @@ class TestNeuralNetwork():
         utils.plotConfusionMatrix(self.conf_mat, val_fold, flag_show)
 
         self.test_loss *= test_loss
-        self.accuracy += accuracy
+        self.accuracy.append(accuracy)
 
 
     def testLoop(self, dataloader, model, loss_fn):
@@ -102,4 +103,6 @@ class TestNeuralNetwork():
         return test_loss, accuracy
 
     def printAccuracy(self):
-        print(f'Accuracy of model: {(self.accuracy/K_FOLD):>0.2f}%')
+        self.accuracy = np.array(self.accuracy)
+        print(f'Accuracy of model: {(self.self.accuracy.mean()):>0.2f}%')
+        print(f'Standard deviation: {(self.self.accuracy.std()):>0.2f}%')

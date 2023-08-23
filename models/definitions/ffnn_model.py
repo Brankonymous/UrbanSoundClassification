@@ -1,13 +1,13 @@
 from torch import nn
 from utils.constants import *
 
-class LinearNeuralNetwork(nn.Module):
+class FFNNNeuralNetwork(nn.Module):
     def __init__(self, input_size=10):
-        super(LinearNeuralNetwork, self).__init__()
+        super(FFNNNeuralNetwork, self).__init__()
 
         self.flatten = nn.Flatten()
         
-        self.linearReluStack = nn.Sequential(
+        self.ffnnReluStack = nn.Sequential(
             nn.Linear(input_size, 25),
             nn.ReLU(),
             nn.Linear(25, 20),
@@ -17,9 +17,8 @@ class LinearNeuralNetwork(nn.Module):
         )
 
     def forward(self, x):
-        # ???
         x = x.to(torch.float32)
         x = self.flatten(x)
-        logits = self.linearReluStack(x)
+        logits = self.ffnnReluStack(x)
         return logits
 

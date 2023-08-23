@@ -9,7 +9,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 from utils.constants import *
 
-class ExtractLinearFeatures(object):
+class ExtractFFNNFeatures(object):
     # Convert audio sample to MFCC Spectogram and calculate median value in every feature
     def __init__(self, num_features=NUM_MFCC_FEATURES):
         self.num_features = num_features

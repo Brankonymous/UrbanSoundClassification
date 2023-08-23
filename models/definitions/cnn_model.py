@@ -57,7 +57,7 @@ class ConvNeuralNetwork(nn.Module):
         self.flatten = nn.Flatten()
         self.adaptivePool = nn.AdaptiveAvgPool2d((7, 7))
 
-        self.linearStack = nn.Sequential(
+        self.ffnnStack = nn.Sequential(
             nn.Linear(128 * 7 * 7, 25),
             nn.ReLU(),
             nn.Dropout(0.5),
@@ -75,7 +75,7 @@ class ConvNeuralNetwork(nn.Module):
 
         x = self.adaptivePool(x)
         x = self.flatten(x)
-        x = self.linearStack(x)
+        x = self.ffnnStack(x)
         
         predictions = self.softmax(x)
         

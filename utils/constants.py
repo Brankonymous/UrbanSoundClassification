@@ -73,6 +73,6 @@ class ModelType(enum.Enum):
     CUSTOM_TEST = 3
 
 class SupportedModels(enum.Enum):
-    LINEAR = 0
+    FFNN = 0
     CNN = 1
     VGG = 2
