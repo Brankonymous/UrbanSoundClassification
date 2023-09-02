@@ -13,6 +13,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score
 
 from models.definitions.cnn_model import ConvNeuralNetwork
 from models.definitions.ffnn_model import FFNNNeuralNetwork
+from models.definitions.custom_vgg import CustomVGGNeuralNetwork
 
 class TrainNeuralNetwork():
     def __init__(self, config):
@@ -46,6 +47,17 @@ class TrainNeuralNetwork():
         elif self.config['model_name'] == SupportedModels.CNN.name:
             # Model
             model = ConvNeuralNetwork()
+            
+            # Initialize the loss and optimizer function
+            loss_fn = nn.CrossEntropyLoss()
+            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
+
+            ###### END OF CNN #######
+
+        elif self.config['model_name'] == SupportedModels.CUSTOM_VGG.name:
+            # Model
+            model = CustomVGGNeuralNetwork()
             
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
@@ -88,9 +100,9 @@ class TrainNeuralNetwork():
             title_info = '(' + self.config['model_name'] + ' model)' + ' Val. fold: ' + str(val_fold)
             utils.plotImage(x=np.arange(len(self.loss), dtype=np.int64), y=self.loss, title='Loss ' + title_info, x_label = 'Epochs', y_label='Cross entropy loss', flag_show=flag_show, flag_save=flag_save)
             utils.plotImage(x=np.arange(len(self.accuracy), dtype=np.int64), y=self.accuracy, title='Accuracy ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.precision), dtype=np.int64), y=self.precision, title='Precision ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.recall), dtype=np.int64), y=self.recall, title='Recall ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
-            utils.plotImage(x=np.arange(len(self.F1), dtype=np.int64), y=self.F1, title='F1 Score ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            # utils.plotImage(x=np.arange(len(self.precision), dtype=np.int64), y=self.precision, title='Precision ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            # utils.plotImage(x=np.arange(len(self.recall), dtype=np.int64), y=self.recall, title='Recall ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
+            # utils.plotImage(x=np.arange(len(self.F1), dtype=np.int64), y=self.F1, title='F1 Score ' + title_info, x_label = 'Epochs', y_label='Accuracy (%)', flag_show=flag_show, flag_save=flag_save)
 
         # Save model if flag is true
         if self.config['save_model'] or self.config['type'] == ModelType.TRAIN_AND_TEST.name:

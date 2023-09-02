@@ -7,8 +7,8 @@ from torch.utils.data import DataLoader
 import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score
 
-from models.definitions.cnn_model import ConvNeuralNetwork
-from models.definitions.ffnn_model import FFNNNeuralNetwork
+import seaborn as sns
+
 from sklearn.metrics import confusion_matrix
 
 class TestNeuralNetwork():
@@ -28,9 +28,8 @@ class TestNeuralNetwork():
         # Generate DataLoader
         test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
 
-        # Model
+        # Load model
         model_path = SAVED_MODEL_PATH + DATASET + '/' + self.config['model_name'] + "_fold" + str(val_fold) + '.pt'
-        print(model_path)
         model = torch.load(model_path, map_location=torch.device(DEVICE))
 
         # Initialize the loss function
@@ -105,4 +104,6 @@ class TestNeuralNetwork():
     def printAccuracy(self):
         self.accuracy = np.array(self.accuracy)
         print(f'Accuracy of model: {(self.self.accuracy.mean()):>0.2f}%')
-        print(f'Standard deviation: {(self.self.accuracy.std()):>0.2f}%')
+        print(f'Standard deviation: {(self.self.accuracy.std()):>0.2f}')
+
+        utils.plotBoxplot(self.accuracy, name=self.config['model_name'], flag_show=False)

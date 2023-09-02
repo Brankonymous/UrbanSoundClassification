@@ -11,7 +11,7 @@ import re
 import matplotlib.pyplot as plt
 # from pretty_confusion_matrix import pp_matrix
 
-import seaborn as sn
+import seaborn as sns
 
 
 from sklearn.model_selection import train_test_split
@@ -181,7 +181,7 @@ def plotConfusionMatrix(confusion_matrix, val_fold, flag_show=True, title='Confu
     plt.ioff()
     
     plt.figure(figsize=(15,15), facecolor='white')
-    sn.heatmap(df_cm, annot=True)
+    sns.heatmap(df_cm, annot=True)
     plt.yticks(rotation=45)
     plt.xticks(rotation=45)
     
@@ -195,6 +195,26 @@ def plotConfusionMatrix(confusion_matrix, val_fold, flag_show=True, title='Confu
 
     if flag_show:
       plt.show()
+    
+    plt.close()
+
+def plotBoxplot(data, name='', flag_show=False):
+    # Disables showing plot if show==False
+    plt.ioff()
+
+    plt.figure(figsize=(15,15), facecolor='white')
+    sns.boxplot(data=data, x='Accuracy')
+
+    print("Saved at:")
+    print(SAVED_RESULTS_PATH + DATASET + '/boxplot_' + name + '.png')
+
+    results_dir = SAVED_RESULTS_PATH + DATASET
+    if not os.path.isdir(results_dir):
+        os.makedirs(results_dir)
+    plt.savefig(results_dir + '/boxplot_' + name + '.png')
+
+    if flag_show:
+        plt.show()
     
     plt.close()
 
