@@ -98,7 +98,7 @@ class CustomVGGNeuralNetwork(nn.Module):
             nn.Linear(in_features=4096, out_features=4096),
             nn.ReLU(),
             nn.Dropout2d(0.5),
-            nn.Linear(in_features=4096, out_features=NUM_CLASSES)
+            nn.Linear(in_features=4096, out_features=1000)
         )
 
         self.softmax = nn.Softmax(dim=1)
