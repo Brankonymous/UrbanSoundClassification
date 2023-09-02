@@ -12,70 +12,112 @@ class ConvNeuralNetwork(nn.Module):
         self.conv1 = nn.Sequential(
             nn.Conv2d(
                 in_channels=3,
-                out_channels=16,
-                kernel_size=3,
-                stride=1,
-                padding=2
-            ),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
-        )
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(
-                in_channels=16,
-                out_channels=32,
-                kernel_size=3,
-                stride=1,
-                padding=2
-            ),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
-        )
-        self.conv3 = nn.Sequential(
-            nn.Conv2d(
-                in_channels=32,
                 out_channels=64,
                 kernel_size=3,
-                stride=1,
                 padding=2
             ),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
+            nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.conv4 = nn.Sequential(
+        self.conv2 = nn.Sequential(
             nn.Conv2d(
                 in_channels=64,
                 out_channels=128,
                 kernel_size=3,
-                stride=1,
-                padding=2
+                padding=1
             ),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=128,
+                out_channels=256,
+                kernel_size=3,
+                padding=1
+            ),
+            nn.ReLU(),
+        )
+        self.conv4 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=256,
+                out_channels=256,
+                kernel_size=3,
+                padding=1
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+
+        self.conv5 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=256,
+                out_channels=512,
+                kernel_size=3,
+                padding=1
+            ),
+            nn.ReLU(),
+        )
+
+        self.conv6 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=512,
+                out_channels=512,
+                kernel_size=3,
+                padding=1
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+
+        self.conv7 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=512, 
+                out_channels=512, 
+                kernel_size=3, 
+                padding=1
+            ),
+            nn.ReLU(),
+            nn.Conv2d(
+                in_channels=512, 
+                out_channels=512, 
+                kernel_size=3, 
+                padding=1
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
         )
 
         self.flatten = nn.Flatten()
-        self.adaptivePool = nn.AdaptiveAvgPool2d((7, 7))
+        # self.adaptivePool = nn.AdaptiveAvgPool2d((7, 7))
 
-        self.ffnnStack = nn.Sequential(
-            nn.Linear(128 * 7 * 7, 25),
+        self.linear_layers = nn.Sequential(
+            nn.Linear(in_features=512*5, out_features=4096),
             nn.ReLU(),
-            nn.Dropout(0.5),
-
-            nn.Linear(25, NUM_CLASSES)
+            nn.Dropout2d(0.5),
+            nn.Linear(in_features=4096, out_features=4096),
+            nn.ReLU(),
+            nn.Dropout2d(0.5),
+            nn.Linear(in_features=4096, out_features=NUM_CLASSES)
         )
 
         self.softmax = nn.Softmax(dim=1)
-
-    def forward(self, input_data):
+    
+    def conv_layers(self, input_data):
         x = self.conv1(input_data)
         x = self.conv2(x)
         x = self.conv3(x)
         x = self.conv4(x)
+        x = self.conv5(x)
+        x = self.conv6(x)
+        x = self.conv7(x)
 
-        x = self.adaptivePool(x)
+        return x
+    
+    def forward(self, input_data):
+        x = self.conv_layers(input_data)
         x = self.flatten(x)
-        x = self.ffnnStack(x)
+        x = self.linear_layers(x)
         
         predictions = self.softmax(x)
         
