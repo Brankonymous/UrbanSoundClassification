@@ -39,15 +39,11 @@ class ExtractFFNNFeatures(object):
             # Extract MFCC
             mfcc_features = librosa.feature.mfcc(y=audio_sample, sr=sample_rate, n_mfcc=self.num_features)
 
-            # Normalize
-            mfcc_features = processing.cmvn(mfcc_features)
             if len(mfcc_features.shape) > 2:
                 mfcc_features = np.mean(mfcc_features, axis=2).ravel()
             [sample['input'].append(feature) for feature in mfcc_features]
 
-
         sample['input'] = np.array(sample['input']).ravel()
-        sample['input'] = normalize(sample['input'][:,np.newaxis], axis=0).ravel()
         return sample
 
 
