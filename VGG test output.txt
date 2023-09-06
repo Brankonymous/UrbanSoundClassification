@@ -1,0 +1,112 @@
+Testing model 1
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold1.pt
+Testing...: [0/873]
+Testing...: [640/873]
+Test Error:
+ Accuracy: 71.1%, Avg Loss: 1.403718
+
+ Recall: 71.1%, Precision: 72.9%, F1 Score: 71.3%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_1.png
+Testing model 2
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold2.pt
+Testing...: [0/888]
+Testing...: [640/888]
+Test Error:
+ Accuracy: 65.8%, Avg Loss: 1.286114
+
+ Recall: 65.8%, Precision: 66.6%, F1 Score: 64.8%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_2.png
+Testing model 3
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold3.pt
+Testing...: [0/925]
+Testing...: [640/925]
+Test Error:
+ Accuracy: 61.0%, Avg Loss: 1.686610
+
+ Recall: 61.0%, Precision: 61.0%, F1 Score: 60.3%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_3.png
+Testing model 4
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold4.pt
+Testing...: [0/990]
+Testing...: [640/990]
+Test Error:
+ Accuracy: 72.1%, Avg Loss: 1.101795
+
+ Recall: 72.1%, Precision: 72.8%, F1 Score: 72.0%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_4.png
+Testing model 5
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold5.pt
+Testing...: [0/936]
+Testing...: [640/936]
+Test Error:
+ Accuracy: 76.5%, Avg Loss: 0.989592
+
+ Recall: 76.5%, Precision: 77.0%, F1 Score: 76.0%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_5.png
+Testing model 6
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold6.pt
+Testing...: [0/823]
+Testing...: [640/823]
+Test Error:
+ Accuracy: 69.1%, Avg Loss: 1.230258
+
+ Recall: 69.1%, Precision: 69.5%, F1 Score: 69.0%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_6.png
+Testing model 7
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold7.pt
+Testing...: [0/838]
+Testing...: [640/838]
+Test Error:
+ Accuracy: 66.7%, Avg Loss: 1.247392
+
+ Recall: 66.7%, Precision: 70.0%, F1 Score: 66.6%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_7.png
+Testing model 8
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold8.pt
+Testing...: [0/806]
+Testing...: [640/806]
+Test Error:
+ Accuracy: 61.9%, Avg Loss: 1.921703
+
+ Recall: 61.9%, Precision: 62.9%, F1 Score: 60.8%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_8.png
+Testing model 9
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold9.pt
+Testing...: [0/816]
+Testing...: [640/816]
+Test Error:
+ Accuracy: 72.9%, Avg Loss: 1.084626
+
+ Recall: 72.9%, Precision: 72.7%, F1 Score: 72.0%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_9.png
+Testing model 10
+models/saved_models/URBAN_SOUNDS_8K/VGG_fold10.pt
+Testing...: [0/837]
+Testing...: [640/837]
+Test Error:
+ Accuracy: 74.2%, Avg Loss: 0.950921
+
+ Recall: 74.2%, Precision: 76.9%, F1 Score: 74.7%
+
+Saved at:
+data/results/URBAN_SOUNDS_8K/conf_matrix_10.png
+Accuracy of model: 69.14%
+Standard deviation: 4.93%

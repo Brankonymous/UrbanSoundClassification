@@ -16,10 +16,10 @@ NUM_CLASSES = 10
 
 # Model constants
 NUM_WORKERS = 0
-BATCH_SIZE = 64
-EPOCHS = 13
+BATCH_SIZE = 128
+EPOCHS = 21
 LEARNING_RATE = 1e-4
-LR_STEP_SIZE = 5
+LR_STEP_SIZE = 10
 WEIGHT_DECAY = 0
 
 # Fully Connected Network features

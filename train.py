@@ -50,12 +50,12 @@ class TrainNeuralNetwork():
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.4)
 
             ###### END OF CNN #######
 
         elif self.config['model_name'] == SupportedModels.VGG.name:
-            model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11_bn', pretrained=True)
+            model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11_bn', pretrained=False)
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
