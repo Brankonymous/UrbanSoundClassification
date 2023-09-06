@@ -16,10 +16,10 @@ NUM_CLASSES = 10
 
 # Model constants
 NUM_WORKERS = 0
-BATCH_SIZE = 128
-EPOCHS = 21
-LEARNING_RATE = 1e-4
-LR_STEP_SIZE = 10
+BATCH_SIZE = 64
+EPOCHS = 13
+LEARNING_RATE = 1e-5
+LR_STEP_SIZE = 5
 WEIGHT_DECAY = 0
 
 # Fully Connected Network features
@@ -76,3 +76,4 @@ class SupportedModels(enum.Enum):
     FFNN = 0
     CNN = 1
     VGG = 2
+    CUSTOM_VGG = 3

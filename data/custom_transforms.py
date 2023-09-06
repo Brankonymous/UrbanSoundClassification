@@ -4,6 +4,7 @@ import numpy as np
 import torchaudio
 from speechpy import processing
 from utils.constants import *
+from sklearn.preprocessing import normalize
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -38,12 +39,9 @@ class ExtractFFNNFeatures(object):
             # Extract MFCC
             mfcc_features = librosa.feature.mfcc(y=audio_sample, sr=sample_rate, n_mfcc=self.num_features)
 
-            # Normalize
-            # mfcc_features = processing.cmvn(mfcc_features)
             if len(mfcc_features.shape) > 2:
                 mfcc_features = np.mean(mfcc_features, axis=2).ravel()
             [sample['input'].append(feature) for feature in mfcc_features]
-
 
         sample['input'] = np.array(sample['input']).ravel()
         return sample
