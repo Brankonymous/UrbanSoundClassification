@@ -85,7 +85,7 @@ class ToThreeChannels(object):
 
         sample['input'] = audio
 
-        print(sample['input'].shape, "GAS")
+        
         return sample
 
 class ToTensor(object):

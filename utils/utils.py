@@ -115,12 +115,18 @@ def loadDataset(config, val_fold=1, test=False):
         NormalizeCNN(),
         ToTensor(),
     ])
+    vgg_transform = transforms.Compose([
+        ExtractMFCC(),
+        ToThreeChannels(),
+        ToTensor(),
+    ])
+    
     if config['model_name'] == SupportedModels.FFNN.name:
         custom_transform = ffnn_transform
     elif config['model_name'] == SupportedModels.CNN.name:
         custom_transform = cnn_transform
     elif config['model_name'] == SupportedModels.VGG.name:
-        custom_transform = cnn_transform
+        custom_transform = vgg_transform
 
     if DATASET == 'URBAN_SOUNDS_8K':
         if not test:
