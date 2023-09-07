@@ -1,4 +1,3 @@
-from data.datasets import IrmasDataset
 from data.custom_transforms import ExtractFFNNFeatures, ExtractMFCC, ToThreeChannels, ToTensor, NormalizeFFNN, NormalizeCNN
 from data.datasets import UrbanSounds8K
 from torchvision import transforms
@@ -22,13 +21,11 @@ from .constants import *
 def loadDataset(config, val_fold=1, test=False):
     ffnn_transform = transforms.Compose([
         ExtractFFNNFeatures(),
-        NormalizeFFNN(),
         ToTensor(),
     ])
     cnn_transform = transforms.Compose([
         ExtractMFCC(),
         ToThreeChannels(),
-        NormalizeCNN(),
         ToTensor(),
     ])
     vgg_transform = transforms.Compose([
@@ -127,7 +124,8 @@ def plotBoxplot(data, name='', flag_show=False):
     plt.ioff()
 
     plt.figure(figsize=(15,15), facecolor='white')
-    sns.boxplot(data=data, x='Accuracy')
+    
+    sns.boxplot(data = data)
 
     print("Saved at:")
     print(SAVED_RESULTS_PATH + DATASET + '/boxplot_' + name + '.png')
@@ -141,6 +139,29 @@ def plotBoxplot(data, name='', flag_show=False):
         plt.show()
     
     plt.close()
+
+def plotBarplot(data, name = '', flag_show = False):
+    plt.ioff()
+
+    plt.figure(figsize=(15,15), facecolor='white')
+    data = list(data)
+    plt.bar(range(1,11), data)
+    #print('GAS', data, type(data))
+
+    print("Saved at:")
+    print(SAVED_RESULTS_PATH + DATASET + '/barplot_' + name + '.png')
+
+    results_dir = SAVED_RESULTS_PATH + DATASET
+    if not os.path.isdir(results_dir):
+        os.makedirs(results_dir)
+    plt.savefig(results_dir + '/barplot_' + name + '.png')
+
+    if flag_show:
+        plt.show()
+    
+    plt.close()
+
+
 
 #Same as keras
 def to_categorical(y, num_classes):
