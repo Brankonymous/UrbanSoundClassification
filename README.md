@@ -17,7 +17,7 @@ Run <b> main.py </b> <br />
 <b>NOTE: </b> You should install <b>PyTorch</b>, <b>TorchAudio</b>, <b>Numpy</b>, <b>sklearn</b> and <b>seaborn</b>
 
 ## Command Line Parameters
-<b> --type       </b>   (Input TRAIN, TEST or CUSTOM_TEST for type of classification) <br />
+<b> --type       </b>   (Input TRAIN, TEST, TRAIN_AND_TEST or CUSTOM_TEST for type of classification) <br />
 <b> --model_name </b>   (Select model to use - FFNN, CNN, VGG) <br />
 <b> --show_results </b>   (Plot loss and accuracy info, default=False) <br />
 <b> --save_results </b>   (Plot loss and accuracy info, default=True) <br />
