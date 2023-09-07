@@ -13,7 +13,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score
 
 from models.definitions.cnn_model import ConvNeuralNetwork
 from models.definitions.ffnn_model import FFNNNeuralNetwork
-from models.definitions.custom_vgg import CustomVGGNeuralNetwork
+
 
 class TrainNeuralNetwork():
     def __init__(self, config):
@@ -51,23 +51,13 @@ class TrainNeuralNetwork():
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.4)
 
             ###### END OF CNN #######
 
-        elif self.config['model_name'] == SupportedModels.CUSTOM_VGG.name:
-            # Model
-            model = CustomVGGNeuralNetwork()
-            
-            # Initialize the loss and optimizer function
-            loss_fn = nn.CrossEntropyLoss()
-            optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=LR_STEP_SIZE, gamma=0.1)
-
-            ###### END OF CNN #######
 
         elif self.config['model_name'] == SupportedModels.VGG.name:
-            model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11_bn', pretrained=True)
+            model = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11_bn', pretrained=False)
             # Initialize the loss and optimizer function
             loss_fn = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)

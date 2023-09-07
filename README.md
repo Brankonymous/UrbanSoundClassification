@@ -23,6 +23,7 @@ Info can also be found using <b>--help</b> parameter
 FFNN network with 3 hidden layers (definition can be found at `models\definitions\ffnn_model.py`) <br />
 CNN network with VGG-like architecture (definition can be found at `models\definitions\cnn_model.py`)<br />
 Pre-trained VGG-11 with Batch Normalization <br />
+Trained models at: https://drive.google.com/drive/folders/1cxllv-qDtqtNUPz3512q5k9uKZ7OAn4W?usp=sharing <br />
 
 # Dataset
 <b> URBANSOUNDS8K </b> https://urbansounddataset.weebly.com/urbansound8k.html (browser download) <br />

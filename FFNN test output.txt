@@ -1,0 +1,79 @@
+Testing model 1
+
+Test Error:
+ Accuracy: 17.0%, Avg Loss: 2.285552
+
+ Recall: 51.7%, Precision: 11.6%, F1 Score: 18.8%
+
+
+Testing model 2
+
+Test Error:
+ Accuracy: 17.0%, Avg Loss: 2.287374
+
+ Recall: 51.9%, Precision: 17.1%, F1 Score: 25.6%
+
+
+Testing model 3
+
+Test Error:
+ Accuracy: 10.8%, Avg Loss: 2.355727
+
+ Recall: 100.0%, Precision: 10.8%, F1 Score: 19.5%
+
+
+Testing model 4
+
+Test Error:
+ Accuracy: 32.0%, Avg Loss: 2.159233
+
+ Recall: 55.3%, Precision: 30.1%, F1 Score: 35.2%
+
+Testing model 5
+
+Test Error:
+ Accuracy: 21.0%, Avg Loss: 2.243442
+
+ Recall: 39.7%, Precision: 16.6%, F1 Score: 23.4%
+
+
+Testing model 6
+
+Test Error:
+ Accuracy: 9.0%, Avg Loss: 2.371247
+
+ Recall: 52.1%, Precision: 4.8%, F1 Score: 8.7%
+
+
+Testing model 7
+
+Test Error:
+ Accuracy: 15.3%, Avg Loss: 2.302011
+
+ Recall: 95.5%, Precision: 15.5%, F1 Score: 26.6%
+
+Testing model 8
+]
+Test Error:
+ Accuracy: 15.9%, Avg Loss: 2.302061
+
+ Recall: 58.7%, Precision: 42.0%, F1 Score: 31.9%
+
+
+Testing model 9
+
+Test Error:
+ Accuracy: 18.4%, Avg Loss: 2.278041
+
+ Recall: 82.4%, Precision: 22.6%, F1 Score: 34.3%
+
+Testing model 10
+
+Test Error:
+ Accuracy: 20.3%, Avg Loss: 2.266994
+
+ Recall: 57.4%, Precision: 21.1%, F1 Score: 30.7%
+
+
+Accuracy of model: 17.67%
+Standard deviation: 5.98%

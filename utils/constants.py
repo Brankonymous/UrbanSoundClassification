@@ -76,4 +76,3 @@ class SupportedModels(enum.Enum):
     FFNN = 0
     CNN = 1
     VGG = 2
-    CUSTOM_VGG = 3
