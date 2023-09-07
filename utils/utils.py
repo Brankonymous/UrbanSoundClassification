@@ -145,6 +145,7 @@ def plotBarplot(data, name = '', flag_show = False):
 
     plt.figure(figsize=(15,15), facecolor='white')
     data = list(data)
+    print(name + ' = ' , data)
     plt.bar(range(1,11), data)
     #print('GAS', data, type(data))
 

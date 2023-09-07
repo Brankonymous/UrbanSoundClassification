@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     # Common params
     # Izbrisali smo argparse.BooleanOptionalAction
-    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.TEST.name)
+    parser.add_argument('--type', choices=[m.name for m in ModelType], type=str, help='Input TRAIN, TEST or CUSTOM_TEST for type of classification', default=ModelType.CUSTOM_TEST.name)
     parser.add_argument('--model_name', choices=[m.name for m in SupportedModels], type=str, help='Neural network (model) to use', default=SupportedModels.VGG.name)
     parser.add_argument('--show_results', help='Plot loss and accuracy info', default=False)
     parser.add_argument('--save_results', help='Save loss and accuracy info', default=False)
