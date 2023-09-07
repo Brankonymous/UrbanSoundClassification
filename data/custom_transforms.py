@@ -2,9 +2,10 @@ import librosa
 import os, sys
 import numpy as np
 import torchaudio
-from speechpy import processing
 from utils.constants import *
 from sklearn.preprocessing import normalize
+from sklearn.preprocessing import StandardScaler
+from torchvision import transforms
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -83,12 +84,36 @@ class ToThreeChannels(object):
         audio = audio.expand(3, y_dim, z_dim)
 
         sample['input'] = audio
+
+        print(sample['input'].shape, "GAS")
         return sample
 
 class ToTensor(object):
+    
     # Convert sample features and output into tensor
     def __call__(self, sample):
         sample['input'] = torch.from_numpy(np.array(sample['input'])).to(DEVICE)
         sample['label'] = torch.from_numpy(np.array(sample['label'])).to(DEVICE)
 
         return sample
+
+class NormalizeFFNN(object):
+
+    def __call__(self, sample):
+        mean = np.mean(sample['input'])
+        std = np.std(sample['input'])
+
+        sample['input'] = (sample['input'] - mean) / std
+        return sample
+
+class NormalizeCNN(object):
+    mean = [0.485, 0.456, 0.406]
+    std = [0.229, 0.224, 0.225]
+
+    def __call__(self, sample):
+        sample['input'] = np.array(sample['input'])
+
+        for channel in range(0, 3):
+            sample['input'][channel] = (sample['input'][channel] - self.mean[channel]) / self.std[channel]
+        return sample
+    

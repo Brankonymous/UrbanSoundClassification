@@ -126,7 +126,7 @@ class TrainNeuralNetwork():
                 # print(pred)
                 print('--------------------------------------------------')
         accuracy *= 100/size
-        print(f'Train accuracy: {accuracy:>7f}')
+        print(f'Train accuracy: {accuracy:>7f}%')
 
         scheduler.step()
 
