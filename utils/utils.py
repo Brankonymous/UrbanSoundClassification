@@ -1,6 +1,6 @@
 from data.datasets import IrmasDataset
-from data.custom_transforms import ExtractFFNNFeatures, ExtractMFCC, ToThreeChannels, ToTensor
-from data.datasets import IrmasDataset, UrbanSounds8K
+from data.custom_transforms import ExtractFFNNFeatures, ExtractMFCC, ToThreeChannels, ToTensor, NormalizeFFNN, NormalizeCNN
+from data.datasets import UrbanSounds8K
 from torchvision import transforms
 
 import numpy as np
@@ -106,12 +106,14 @@ def parseDataset(csv_path, dataset_path):
 def loadDataset(config, val_fold=1, test=False):
     ffnn_transform = transforms.Compose([
         ExtractFFNNFeatures(),
-        ToTensor()
+        NormalizeFFNN(),
+        ToTensor(),
     ])
     cnn_transform = transforms.Compose([
         ExtractMFCC(),
         ToThreeChannels(),
-        ToTensor()
+        NormalizeCNN(),
+        ToTensor(),
     ])
     if config['model_name'] == SupportedModels.FFNN.name:
         custom_transform = ffnn_transform
