@@ -103,6 +103,6 @@ class TestNeuralNetwork():
 
     def printAccuracy(self):
         self.accuracy = np.array(self.accuracy)
-        print(f'Accuracy of model: {(self.self.accuracy.mean()):>0.2f}%')
-        print(f'Standard deviation: {(self.self.accuracy.std()):>0.2f}')
-        utils.plotBoxplot(self.accuracy, name=self.config['model_name'], flag_show=self.config['show_results'])
+        print(f'Accuracy of model: {(self.accuracy.mean()):>0.2f}%')
+        print(f'Standard deviation: {(self.accuracy.std()):>0.2f}')
+        #utils.plotBoxplot(self.accuracy, name=self.config['model_name'], flag_show=self.config['show_results'])
