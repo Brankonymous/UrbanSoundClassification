@@ -5,8 +5,8 @@ Audio classification using PyTorch. <br />
 Comparing custom made FFNN and CNN models to a pre-trained VGG-11 with Batch Normalization.
 
 # Paper
-_IN PROGRESS_
-Paper (written in Serbian) describing project ideas and implementation can be found [here](https://brown-tim-82.tiiny.site/)
+Paper (written in Serbian) describing project ideas and implementation can be found [here](https://github.com/Brankonymous/UrbanSoundClassification/blob/main/papers/Klasifikacija_urbanih_zvukova.pdf)
+Presentations (written in Serbian) describing project ideas and implementation can be found [here](https://github.com/Brankonymous/UrbanSoundClassification/blob/main/papers/Urban%20sounds%20classification.pdf)
 
 # Setup
 Dataset folder should be found in `data/dataset/` under the name `URBANSOUND8K` (download from website below) <br>
