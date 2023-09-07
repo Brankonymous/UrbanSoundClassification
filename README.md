@@ -5,7 +5,7 @@ Audio classification using PyTorch. <br />
 Comparing custom made FFNN and CNN models to a pre-trained VGG-11 with Batch Normalization.
 
 # Paper
-Paper (written in Serbian) describing project ideas and implementation can be found [here](https://github.com/Brankonymous/UrbanSoundClassification/blob/main/papers/Klasifikacija_urbanih_zvukova.pdf) <br />
+Paper (written in Serbian) describing project ideas and implementation can be found [here](https://drive.google.com/file/d/1YCSiXmiEg7oR96LQm572V8r5HfZgDm2h/view?usp=drive_link) <br />
 Presentations (written in Serbian) describing project ideas and implementation can be found [here](https://github.com/Brankonymous/UrbanSoundClassification/blob/main/papers/Urban%20sounds%20classification.pdf)
 
 # Setup
